@@ -157,7 +157,7 @@ var models = {
     async.parallel([
         function(callback) {
           InvestmentType.count({
-            email: {
+            name: {
               '$regex': check
             }
           }).exec(function(err, number) {
@@ -175,7 +175,7 @@ var models = {
         },
         function(callback) {
           InvestmentType.find({
-            email: {
+            name: {
               '$regex': check
             }
           }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {

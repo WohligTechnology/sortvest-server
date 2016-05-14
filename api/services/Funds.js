@@ -71,6 +71,7 @@ var models = {
         this.findOne({
             "_id": data._id
         }).exec(function (err, found) {
+          console.log(found);
             if (err) {
                 console.log(err);
                 callback(err, null);

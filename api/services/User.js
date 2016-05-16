@@ -16,7 +16,7 @@ var schema = new Schema({
       default: ""
     },
     dob: {
-      type: String,
+      type: Date,
       default: ""
     },
     relationship: {
@@ -139,6 +139,7 @@ module.exports = mongoose.model('User', schema);
 var models = {
   saveData: function(data, callback) {
     var user = this(data);
+    console.log(data);
     user.timestamp = new Date();
     if (data._id) {
       this.findOneAndUpdate({

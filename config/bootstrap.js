@@ -10,6 +10,15 @@
  */
 
 module.exports.bootstrap = function(cb) {
+  sails.moment = require('moment'),
+
+  sails.fs = require('fs'),
+
+  sails.xlsxj = require('xlsx-to-json'),
+
+  sails.xlsx = require('xlsx'),
+
+  sails.finance = require('node-finance'),
 
   // It's very important to trigger this callback method when you are finished
   // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)

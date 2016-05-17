@@ -4,17 +4,17 @@
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
-var type0 = require('../../findGridByType0.json');
-var type10 = require('../../findGridByType10.json');
-var type20 = require('../../findGridByType20.json');
-var type30 = require('../../findGridByType30.json');
-var type40 = require('../../findGridByType40.json');
-var type50 = require('../../findGridByType50.json');
-var type60 = require('../../findGridByType60.json');
-var type70 = require('../../findGridByType70.json');
-var type80 = require('../../findGridByType80.json');
-var type90 = require('../../findGridByType90.json');
-var type100 = require('../../findGridByType100.json');
+var type0 = require('../../computedata/findGridByType0.json');
+var type10 = require('../../computedata/findGridByType10.json');
+var type20 = require('../../computedata/findGridByType20.json');
+var type30 = require('../../computedata/findGridByType30.json');
+var type40 = require('../../computedata/findGridByType40.json');
+var type50 = require('../../computedata/findGridByType50.json');
+var type60 = require('../../computedata/findGridByType60.json');
+var type70 = require('../../computedata/findGridByType70.json');
+var type80 = require('../../computedata/findGridByType80.json');
+var type90 = require('../../computedata/findGridByType90.json');
+var type100 = require('../../computedata/findGridByType100.json');
 
 
 

@@ -174,7 +174,7 @@ module.exports = {
 
   alltypes: function(data, callback) {
     var cashflow = [];
-    User.generateCashflow(data, cashflow);
+    Compute.generateCashflow(data, cashflow);
     var nocallback = 0;
     var type = 0;
     var alltypes = [];
@@ -192,7 +192,7 @@ module.exports = {
     for (var i = 0; i <= 0; i++) {
       data.type = i;
       var data1 = _.clone(data, true);
-      User.allpath(data1, cashflow, onReturn);
+      Compute.allpath(data1, cashflow, onReturn);
     }
 
 
@@ -208,7 +208,7 @@ module.exports = {
     var cashflow = [];
     var targetCashflow = [];
     var dates = [];
-    User.generateCashflow(data, cashflow);
+    Compute.generateCashflow(data, cashflow);
     var month;
     month = new Date();
     for (var i = 0; i < cashflow.length; i++) {
@@ -218,7 +218,7 @@ module.exports = {
     var nocallback = 0;
     var type = 0;
     var alltypes = [];
-    var xirr = User.XIRR(cashflow, dates) * 100;
+    var xirr = Compute.XIRR(cashflow, dates) * 100;
     var requiredRate = Math.pow(parseFloat(Math.abs(1 + xirr / 100)), parseFloat((1 / 12))) - 1;
 
     var inflationRate = Math.pow(parseFloat(Math.abs(1 + data.inflation / 100)), parseFloat((1 / 12))) - 1;
@@ -239,7 +239,7 @@ module.exports = {
     for (var i = 0; i <= 10; i++) {
       data.type = i;
       var data1 = _.clone(data, true);
-      User.generateAllPathTenure(data1, cashflow, onReturn);
+      Compute.generateAllPathTenure(data1, cashflow, onReturn);
     }
 
     function callCallback() {
@@ -324,23 +324,23 @@ module.exports = {
               if (partialFeasible[partialFeasible.length - 1].median50[i] > 0) {
                 num2 = partialFeasible[partialFeasible.length - 1].median50[i];
               } else {
-                num2 = 0
+                num2 = 0;
               }
             }
             i++;
             return num1 + num2;
           })
-          targetXirr = User.XIRR(targetCashflow, dates) * 100;
+          targetXirr = Compute.XIRR(targetCashflow, dates) * 100;
           targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
           //                    targetRate = 0.0029;
 
           var suggestions = {
-            installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
-            lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
-            monthly: User.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
-            noOfInstallment: User.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
-            noOfMonth: User.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
-            startMonth: User.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
+            installment: Compute.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
+            lumpsum: Compute.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
+            monthly: Compute.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
+            noOfInstallment: Compute.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
+            noOfMonth: Compute.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
+            startMonth: Compute.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
           };
         }
 
@@ -388,18 +388,18 @@ module.exports = {
             return num1 + num2;
           });
 
-          targetXirr = User.XIRR(targetCashflow, dates) * 100;
+          targetXirr = Compute.XIRR(targetCashflow, dates) * 100;
 
           targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
           //                    targetRate = 0.0029;
 
           var suggestions = {
-            installment: User.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
-            lumpsum: User.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
-            monthly: User.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
-            noOfInstallment: User.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
-            noOfMonth: User.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
-            startMonth: User.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
+            installment: Compute.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
+            lumpsum: Compute.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
+            monthly: Compute.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
+            noOfInstallment: Compute.suggestRequiredInstallments(data, inflationRate, targetRate, requiredRate, cashflow),
+            noOfMonth: Compute.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
+            startMonth: Compute.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
           };
           callback({
             value: true,
@@ -415,8 +415,8 @@ module.exports = {
     }
   },
   suggestInstallment: function(data, inflationRate, targetRate, requiredRate, cashflow) {
-    var futureValInn = User.FV(targetRate, data.noOfMonth, data.monthly, data.lumpsum, 0);
-    var futureVal = User.FV(targetRate, data.startMonth - data.noOfMonth, 0, futureValInn, 0);
+    var futureValInn = Compute.FV(targetRate, data.noOfMonth, data.monthly, data.lumpsum, 0);
+    var futureVal = Compute.FV(targetRate, data.startMonth - data.noOfMonth, 0, futureValInn, 0);
     var installmentRight = (targetRate - inflationRate) / (1 - Math.pow(((1 + inflationRate) / (1 + targetRate)), data.noOfInstallment));
     var installmentDenominator = Math.pow((1 + inflationRate), (data.startMonth + 1));
     var result = (futureVal * installmentRight) / installmentDenominator;
@@ -433,7 +433,7 @@ module.exports = {
       }
       i++;
     });
-    var result = User.PV(targetRate, data.noOfMonth, data.monthly, fv, 0);
+    var result = Compute.PV(targetRate, data.noOfMonth, data.monthly, fv, 0);
     return Math.ceil(result);
   },
   suggestMonthly: function(data, inflationRate, targetRate, requiredRate, cashflow) {
@@ -446,12 +446,12 @@ module.exports = {
       }
       i++;
     });
-    var result = User.PMT(targetRate, data.noOfMonth, data.lumpsum, fv, 0);
+    var result = Compute.PMT(targetRate, data.noOfMonth, data.lumpsum, fv, 0);
     return Math.ceil(result);
   },
   suggestRequiredInstallments: function(data, inflationRate, targetRate, requiredRate, cashflow) {
-    var futureValInn = User.FV(targetRate, data.noOfMonth, data.monthly, data.lumpsum, 0);
-    var futureValNumerator = User.FV(targetRate, data.startMonth - data.noOfMonth, 0, futureValInn, 0) * (targetRate - inflationRate);
+    var futureValInn = Compute.FV(targetRate, data.noOfMonth, data.monthly, data.lumpsum, 0);
+    var futureValNumerator = Compute.FV(targetRate, data.startMonth - data.noOfMonth, 0, futureValInn, 0) * (targetRate - inflationRate);
     var denominator = data.installment * Math.pow(1 + inflationRate, data.startMonth) + 1;
     var result = Math.log(1 - (futureValNumerator / denominator)) / Math.log((1 + inflationRate) / (1 + targetRate));
     return Math.floor(result);
@@ -459,7 +459,7 @@ module.exports = {
   suggestStartMonth: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     var innerFraction1 = Math.pow(1 + targetRate, data.noOfMonth);
     var innerFraction2 = (1 - Math.pow(((1 + inflationRate) / (1 + targetRate)), data.noOfInstallment)) / (targetRate - inflationRate);
-    var denominator = User.FV(targetRate, data.noOfMonth, (-1) * data.monthly, (-1) * data.lumpsum, 0);
+    var denominator = Compute.FV(targetRate, data.noOfMonth, (-1) * data.monthly, (-1) * data.lumpsum, 0);
     var numerator = innerFraction1 * data.installment * (1 + inflationRate) * innerFraction2;
     var logterm = numerator / denominator;
     var logresult = Math.log(logterm) / Math.log((1 + targetRate) / (1 + inflationRate));
@@ -500,11 +500,11 @@ module.exports = {
       if (nocallback == totalpath) {
         callCallback();
       } else {
-        User.compute(data, cashflow, onReturn);
+        Compute.compute(data, cashflow, onReturn);
       }
     }
     data.path = i;
-    User.compute(data, cashflow, onReturn);
+    Compute.compute(data, cashflow, onReturn);
 
     function callCallback() {
 
@@ -526,7 +526,7 @@ module.exports = {
   compute: function(data, cashflow, callback) {
     if (!cashflow) {
       cashflow = [];
-      User.generateCashflow(data, cashflow);
+      Compute.generateCashflow(data, cashflow);
     }
     var tempoutput;
     var requestData = {};
@@ -543,7 +543,7 @@ module.exports = {
             pathPercent[key.tenure - 1] = key.value;
           }
           var totalAmountPaid = data.lumpsum + (data.monthly * data.noOfMonth);
-          tempoutput = User.computePathData(pathPercent, cashflow, data.startMonth, totalAmountPaid);
+          tempoutput = Compute.computePathData(pathPercent, cashflow, data.startMonth, totalAmountPaid);
           callback(tempoutput);
         } else {
           callback();
@@ -570,7 +570,7 @@ module.exports = {
     data.type = data.type + "0%";
     if (!cashflow) {
       cashflow = [];
-      User.generateCashflow(data, cashflow);
+      Compute.generateCashflow(data, cashflow);
     }
     var maxGrid = 950 * (cashflow.length + 5);
     var totalpath = 950;
@@ -626,7 +626,7 @@ module.exports = {
         });
         var long = 0;
         if (cashflow.length - 1 == i) {
-          long = User.calcLongValue(cashflow, cashflow.length, pathvaltemp[med1key]);
+          long = Compute.calcLongValue(cashflow, cashflow.length, pathvaltemp[med1key]);
           goalcount = _.filter(pathvaltemp, function(n) {
             return n > 0;
           }).length;
@@ -642,11 +642,11 @@ module.exports = {
         });
 
         if (i === 0) {
-          tenure[i].percentage = User.calcLongValue(cashflow, i + 1, cashflow[0]);
+          tenure[i].percentage = Compute.calcLongValue(cashflow, i + 1, cashflow[0]);
           tenure[i].ith = i + 1;
           tenure[i].lastone = cashflow[0];
         } else {
-          tenure[i].percentage = User.calcLongValue(cashflow, i + 1, tenure[i].median1);
+          tenure[i].percentage = Compute.calcLongValue(cashflow, i + 1, tenure[i].median1);
           tenure[i].ith = i + 1;
           tenure[i].lastone = tenure[i].median1;
           if (!foundLast && tenure[i].lastone <= 0) {
@@ -785,7 +785,7 @@ module.exports = {
     var returnthis = {};
     for (i = 1; i < path.length; i++) {
       prevpathval = pathval;
-      pathval = User.computePath({
+      pathval = Compute.computePath({
         pathval: pathval,
         percent: path[i],
         amount: cash[i]
@@ -798,9 +798,9 @@ module.exports = {
 
         if (pathval == 0) {
           goalcount = true;
-          longvalue = User.calcLongValue(cash, i, prevpathval);
+          longvalue = Compute.calcLongValue(cash, i, prevpathval);
         } else {
-          longvalue = User.calcLongValue(cash, i + 1, pathval);
+          longvalue = Compute.calcLongValue(cash, i + 1, pathval);
         }
         break;
       }

@@ -25,7 +25,7 @@ module.exports = {
 				var print = function(data) {
 					res.json(data);
 				}
-				User.save(req.body, print);
+				Compute.save(req.body, print);
 			}
 		} else {
 			res.json({
@@ -40,7 +40,7 @@ module.exports = {
 				var print = function(data) {
 					res.json(data);
 				}
-				User.delete(req.body, print);
+				Compute.delete(req.body, print);
 			} else {
 				res.json({
 					value: false,
@@ -58,24 +58,24 @@ module.exports = {
 		function callback(data) {
 			res.json(data);
 		}
-		User.compute(req.body, false, callback);
+		Compute.compute(req.body, false, callback);
 	},
 	generateCashflow: function(req, res) {
 		var callback = [];
-		User.generateCashflow(req.body, callback);
+		Compute.generateCashflow(req.body, callback);
 		res.json(callback);
 	},
 	generateAllPathTenure: function(req, res) {
 		function callback(data) {
 			res.json(data);
 		}
-		User.generateAllPathTenure(req.body, callback);
+		Compute.generateAllPathTenure(req.body, callback);
 	},
 	alltypes: function(req, res) {
 		function callback(data) {
 			res.json(data);
 		}
-		User.alltypes(req.body, callback);
+		Compute.alltypes(req.body, callback);
 	},
 	alltypes2: function(req, res) {
 
@@ -85,13 +85,13 @@ module.exports = {
 		function callback(data) {
 			res.json(data);
 		}
-		User.alltypes2(req.body, callback);
+		Compute.alltypes2(req.body, callback);
 	},
 	alltypes3: function(req, res) {
 		function callback(data) {
 			res.json(data);
 		}
-		User.alltypes2({
+		Compute.alltypes2({
 			"lumpsum": 100000,
 			"monthly": 15000,
 			"noOfMonth": 10,
@@ -106,50 +106,50 @@ module.exports = {
 			res.json(data);
 		};
 		var cashflow = [];
-		User.generateCashflow(req.body, cashflow);
-		User.allpath(req.body, cashflow, callback);
+		Compute.generateCashflow(req.body, cashflow);
+		Compute.allpath(req.body, cashflow, callback);
 	},
 	find: function(req, res) {
 		function callback(data) {
 			res.json(data);
 		};
-		User.find(req.body, callback);
+		Compute.find(req.body, callback);
 	},
 	generatePathData: function(req, res) {
 		function callback(data) {
 			res.json(data);
 		};
-		User.generatePathData(req.body, callback);
+		Compute.generatePathData(req.body, callback);
 	},
 	adminlogin: function(req, res) {
 		function callback(data) {
 			res.json(data);
 		};
-		User.adminlogin(req.body, callback);
+		Compute.adminlogin(req.body, callback);
 	},
 	findApproved: function(req, res) {
 		function callback(data) {
 			res.json(data);
 		};
-		User.findApproved(req.body, callback);
+		Compute.findApproved(req.body, callback);
 	},
 	deleteRejected: function(req, res) {
 		function callback(data) {
 			res.json(data);
 		};
-		User.deleteRejected(req.body, callback);
+		Compute.deleteRejected(req.body, callback);
 	},
 	findAwaitingApproval: function(req, res) {
 		function callback(data) {
 			res.json(data);
 		};
-		User.findAwaitingApproval(req.body, callback);
+		Compute.findAwaitingApproval(req.body, callback);
 	},
 	findRejected: function(req, res) {
 		function callback(data) {
 			res.json(data);
 		};
-		User.findRejected(req.body, callback);
+		Compute.findRejected(req.body, callback);
 	},
 	findone: function(req, res) {
 		if (req.body) {
@@ -157,7 +157,7 @@ module.exports = {
 				var print = function(data) {
 					res.json(data);
 				}
-				User.findone(req.body, print);
+				Compute.findone(req.body, print);
 			} else {
 				res.json({
 					value: false,
@@ -177,7 +177,7 @@ module.exports = {
 				var print = function(data) {
 					res.json(data);
 				}
-				User.isModerator(req.body, print);
+				Compute.isModerator(req.body, print);
 			} else {
 				res.json({
 					value: false,
@@ -197,7 +197,7 @@ module.exports = {
 				function callback(data) {
 					res.json(data);
 				};
-				User.findlimited(req.body, callback);
+				Compute.findlimited(req.body, callback);
 			} else {
 				res.json({
 					value: false,

@@ -1,2 +1,2 @@
-rm -rf .tmp/public
-nodemon app.js
+sudo rm -rf .tmp/public
+sudo nodemon app.js

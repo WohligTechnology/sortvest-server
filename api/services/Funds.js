@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var schema = new Schema({
     name: { type: String, default:"" },
-    price:{ type: String, default:"" },
+    price:{ type: Number, default:"" },
     type:{ type: String, default:"" }
 });
 

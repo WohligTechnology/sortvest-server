@@ -1,7 +1,11 @@
 var mongoose = require('mongoose');
+var md5 = require('MD5');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
+  name: String,
+  email: String,
+  password: String,
   nominee: [{
     name: {
       type: String,
@@ -54,7 +58,7 @@ var schema = new Schema({
   },
   occupation: {
     type: String,
-    default:""
+    default: ""
   },
   gender: {
     type: String,
@@ -138,34 +142,37 @@ var schema = new Schema({
 module.exports = mongoose.model('User', schema);
 var models = {
   saveData: function(data, callback) {
+    if (data.password && data.password != "") {
+      data.password = md5(data.password);
+    }
     var user = this(data);
     console.log(data);
     user.timestamp = new Date();
-    if (data._id) {
-      this.findOneAndUpdate({
-        _id: data._id
-      }, data).exec(function(err, updated) {
+      this.count({
+        email: data.email
+      }, function(err, found) {
         if (err) {
           console.log(err);
           callback(err, null);
-        } else if (updated) {
-          callback(null, updated);
         } else {
-          callback(null, {});
+          // callback(null, data2);
+          if (found == 0) {
+            user.save(function(err, data2) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    callback(null, data2);
+                }
+            });
+          } else {
+            callback(null, {
+              message: "User already exists"
+            });
+          }
         }
       });
-    } else {
-      user.save(function(err, created) {
-        if (err) {
-          callback(err, null);
-        } else if (created) {
-          callback(null, created);
-        } else {
-          callback(null, {});
-        }
-      });
-    }
-  },
+    },
   deleteData: function(data, callback) {
     this.findOneAndRemove({
       _id: data._id
@@ -204,6 +211,59 @@ var models = {
         callback(null, {});
       }
     });
+  },
+
+  login: function(data, callback) {
+    this.findOne({
+      email: data.email,
+      password: md5(data.password)
+    }).lean().exec(function(err, found) {
+      if (err) {
+        console.log(err);
+        callback(err, null);
+      } else {
+        if (_.isEmpty(found)) {
+          callback(null, {});
+        } else {
+          delete found.password;
+          callback(null, found);
+        }
+      }
+    });
+  },
+  editProfile: function(data, callback) {
+    delete data.password;
+      data.modificationDate = new Date();
+      this.findOneAndUpdate({
+          _id: data._id
+      }, data, function(err, data2) {
+          if (err) {
+              console.log(err);
+              callback(err, null);
+          } else {
+              // callback(null, data);
+              User.getSession(data, function(err, data3) {
+                  if (err) {
+                      console.log(err);
+                      callback(err, null);
+                  } else {
+                      callback(null, data3);
+                  }
+              });
+          }
+      });
+  },
+  getSession: function(data, callback) {
+      User.findOne({
+          _id: data._id
+      }, function(err, res) {
+          if (err) {
+              console.log(err);
+              callback(err, null);
+          } else {
+              callback(null,res);
+          }
+      });
   },
   findLimited: function(data, callback) {
     var newreturns = {};

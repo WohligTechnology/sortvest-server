@@ -68,7 +68,9 @@ module.exports = {
             } else {
               res.json({
                 value: false,
-                data: {message: "Invalid Username/password"}
+                data: {
+                  message: "Invalid Username/password"
+                }
               });
             }
           }
@@ -105,6 +107,7 @@ module.exports = {
 
   getProfile: function(req, res) {
     if (req.session.user) {
+      console.log(JSON.stringify(req.session.user));
       res.json(
         req.session.user
       );

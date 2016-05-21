@@ -96,6 +96,21 @@ var models = {
       }
     });
   },
+
+  getPortfolio: function(data, callback){
+    this.find({
+      "user": data.user
+    }).exec(function(err, found) {
+      if (err) {
+        console.log(err);
+        callback(err, null);
+      } else if (found && Object.keys(found).length > 0) {
+        callback(null, found);
+      } else {
+        callback(null, {});
+      }
+    });
+  },
   findLimited: function(data, callback) {
     var newreturns = {};
     newreturns.data = [];

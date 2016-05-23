@@ -13,7 +13,7 @@ var schema = new Schema({
     purchaseprice: { type: String, default:"" },
     quantity: { type: String, default:"" }
   }],
-  goalGame: { type: String, default:"" },
+  goalName: { type: String, default:"" },
   lumpsum: { type: String, default:"" },
   monthly: { type: String, default:"" },
   monthlyUptil: { type: String, default:"" },

@@ -142,7 +142,7 @@ var schema = new Schema({
 module.exports = mongoose.model('User', schema);
 var models = {
   saveData: function(data, callback) {
-    if (data.password && data.password != "") {
+    if (data.password && data.password !== "") {
       data.password = md5(data.password);
     }
     var user = this(data);
@@ -156,7 +156,7 @@ var models = {
           callback(err, null);
         } else {
           // callback(null, data2);
-          if (found == 0) {
+          if (found === 0) {
             user.save(function(err, data2) {
                 if (err) {
                     console.log(err);

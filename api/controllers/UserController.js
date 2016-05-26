@@ -49,7 +49,7 @@ module.exports = {
   },
   login: function(req, res) {
     if (req.body) {
-      if (req.body.email && req.body.email != "" && req.body.password && req.body.password != "") {
+      if (req.body.email && req.body.email !== "" && req.body.password && req.body.password !== "") {
         User.login(req.body, function(err, data) {
           if (err) {
             res.json({

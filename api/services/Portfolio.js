@@ -14,16 +14,16 @@ var schema = new Schema({
     quantity: { type: String, default:"" }
   }],
   goalName: { type: String, default:"" },
-  lumpsum: { type: String, default:"" },
-  monthly: { type: String, default:"" },
-  monthlyUptil: { type: String, default:"" },
+  lumpsum: { type: Number, default:0 },
+  monthly: { type: Number, default:0 },
+  noOfMonth: { type: Number, default:0 },
   withDrawalFreq: { type: String, default:"" },
-  inflationRate: { type: String, default:"" },
-  withDrawalAmount: { type: String, default:"" },
-  withDrawalPeriod: { type: String, default:"" },
-  shortloss: { type: String, default:"" },
-  longloss: { type: String, default:"" },
-  amount: { type: String, default:"" }
+  inflation: { type: Number, default:0 },
+  installment: { type: Number, default:0 },
+  noOfInstallment: { type: Number, default:0 },
+  startMonth: { type: Number, default:0 },
+  shortinput: { type: Number, default:0 },
+  longinput: { type: Number, default:0 }
 });
 
 module.exports = mongoose.model('Portfolio', schema);

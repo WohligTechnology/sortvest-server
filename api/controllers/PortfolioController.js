@@ -14,7 +14,7 @@ module.exports = {
             res.json({
               value: true,
               data: {
-                message: "Portfolio created"
+                _id:data._id
               }
             });
           }

@@ -25,7 +25,7 @@ var schema = new Schema({
             default: ""
         }
     }],
-    goalName: {
+    goalname: {
         type: String,
         default: ""
     },
@@ -41,7 +41,7 @@ var schema = new Schema({
         type: Number,
         default: 0
     },
-    withDrawalFreq: {
+    withdrawalfrequency: {
         type: String,
         default: ""
     },

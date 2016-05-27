@@ -25,7 +25,7 @@ var schema = new Schema({
             default: ""
         }
     }],
-    goalname: {
+    goalName: {
         type: String,
         default: ""
     },
@@ -75,6 +75,7 @@ module.exports = mongoose.model('Portfolio', schema);
 
 var models = {
     saveData: function(data, callback) {
+      console.log(data);
         var portfolio = this(data);
         portfolio.timestamp = new Date();
         if (data._id) {

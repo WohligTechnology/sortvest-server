@@ -169,6 +169,7 @@ var models = {
         });
     },
     findLimited: function(data, callback) {
+      console.log(data);
         var newreturns = {};
         newreturns.data = [];
         var check = new RegExp(data.search, "i");
@@ -177,7 +178,7 @@ var models = {
         async.parallel([
                 function(callback) {
                     Portfolio.count({
-                        goalname: {
+                        goalName: {
                             '$regex': check
                         }
                     }).exec(function(err, number) {
@@ -195,7 +196,7 @@ var models = {
                 },
                 function(callback) {
                     Portfolio.find({
-                        goalname: {
+                        goalName: {
                             '$regex': check
                         }
                     }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
@@ -203,6 +204,7 @@ var models = {
                             console.log(err);
                             callback(err, null);
                         } else if (data2 && data2.length > 0) {
+                          console.log(data2);
                             newreturns.data = data2;
                             callback(null, newreturns);
                         } else {

@@ -158,7 +158,9 @@ var models = {
           } else if (found && Object.keys(found).length > 0) {
               callback(null, found);
           } else {
-              callback(null, {});
+              callback(null, {
+                "message":"No data found",
+              });
           }
       });
     },

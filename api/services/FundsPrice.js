@@ -94,11 +94,14 @@ var models = {
         data.pagenumber = parseInt(data.pagenumber);
         data.pagesize = parseInt(data.pagesize);
         async.parallel([
+
                 function(callback) {
+
                     FundsPrice.count({
                         price: {
                             '$regex': check
-                        }
+                        },
+                         funds: data._id
                     }).exec(function(err, number) {
                         if (err) {
                             console.log(err);
@@ -116,7 +119,8 @@ var models = {
                     FundsPrice.find({
                         price: {
                             '$regex': check
-                        }
+                        },
+                         funds: data._id
                     }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
                         if (err) {
                             console.log(err);

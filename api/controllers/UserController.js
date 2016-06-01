@@ -118,6 +118,14 @@ module.exports = {
       });
     }
   },
+  logout: function(req, res) {
+      req.session.destroy(function(err) {
+        res.json({
+             data: "Logout Successful",
+             value: true
+         });
+      });
+},
 
   editProfile: function(req, res) {
     if (req.body) {
@@ -178,6 +186,19 @@ module.exports = {
       });
     }
   },
+  getAllNominee: function(req, res) {
+    function callback(err, data) {
+      Global.response(err, data, res);
+    }
+    if (req.body) {
+      User.getAllNominee(req.body, res.callback);
+    } else {
+      res.json({
+        value: false,
+        data: "Invalid Request"
+      });
+    }
+  },
   findLimited: function(req, res) {
     if (req.body) {
       if (req.body.pagenumber && req.body.pagenumber !== "" && req.body.pagesize && req.body.pagesize !== "") {
@@ -194,5 +215,5 @@ module.exports = {
         data: "Invalid Request"
       });
     }
-  },
+  }
 };

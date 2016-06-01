@@ -75,7 +75,7 @@ module.exports = mongoose.model('Portfolio', schema);
 
 var models = {
     saveData: function(data, callback) {
-      console.log(data);
+        console.log(data);
         var portfolio = this(data);
         portfolio.timestamp = new Date();
         if (data._id) {
@@ -117,11 +117,14 @@ var models = {
         });
     },
     getAll: function(data, callback) {
-        this.find({}).exec(function(err, found) {
+        this.find({}).lean().exec(function(err, found) {
             if (err) {
                 console.log(err);
                 callback(err, null);
             } else if (found && found.length > 0) {
+                _.each(found, function(n) {
+                    n.type = "Portfolio";
+                });
                 callback(null, found);
             } else {
                 callback(null, []);
@@ -170,7 +173,7 @@ var models = {
         });
     },
     findLimited: function(data, callback) {
-      console.log(data);
+        console.log(data);
         var newreturns = {};
         newreturns.data = [];
         var check = new RegExp(data.search, "i");
@@ -200,12 +203,18 @@ var models = {
                         goalName: {
                             '$regex': check
                         }
-                    }).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
+                    }).populate([{
+                        path: "user",
+                        select: {
+                            _id: 1,
+                            name: 1
+                        }
+                    }]).skip(data.pagesize * (data.pagenumber - 1)).limit(data.pagesize).exec(function(err, data2) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
                         } else if (data2 && data2.length > 0) {
-                          console.log(data2);
+                            console.log(data2);
                             newreturns.data = data2;
                             callback(null, newreturns);
                         } else {

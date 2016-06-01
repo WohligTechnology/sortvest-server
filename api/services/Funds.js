@@ -61,6 +61,9 @@ var models = {
                 console.log(err);
                 callback(err, null);
             } else if (found && found.length > 0) {
+              _.each(found, function(n) {
+                  n.type = "funds";
+              });
                 callback(null, found);
             } else {
                 callback(null, []);

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <script src="jquery.js"></script>
+    <script src="lodash.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="chartconfig.js"></script>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <link rel="stylesheet" href="page.css">
+    <style media="screen">
+      .form-group {
+        margin-bottom: 3px;
+      }
+      .form-control {
+        display: block;
+        width: 100%;
+        height: 25px;
+        padding: 1px 10px;
+        font-size: 12px;
+        line-height: 1;
+        color: #555;
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+        -webkit-transition: border-color ease-in-out 0.15s,-webkit-box-shadow ease-in-out 0.15s;
+        -o-transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
+        transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class=" col-md-3">
+          <div class="spacer" style="height: 20px;"></div>
+          <form id="planner" action="javascript:submitForm();">
+            <div class="form-group">
+              <label for="LumpsumCont">Lumpsum Contribution</label>
+              <input type="number" value="100000" class="form-control" id="LumpsumCont" placeholder="Lumpsum Contribution">
+            </div>
+            <div class="form-group">
+              <label for="MonthlyCont">Monthly Contribution</label>
+              <input type="number" value="11000" class="form-control" id="MonthlyCont" placeholder="Monthly Contribution">
+            </div>
+            <div class="form-group">
+              <label for="MonthlyContNo">Monthly Contribution Nos.</label>
+              <input type="number" value="10" class="form-control" id="MonthlyContNo" placeholder="Monthly Contribution Nos.">
+            </div>
+            <div class="form-group">
+              <label for="Installment">Installment Present Value</label>
+              <input type="number" value="20000" class="form-control" id="Installment" placeholder="Installment Present Value">
+            </div>
+            <div class="form-group">
+              <label for="RequiredInstallment">Required Installments</label>
+              <input type="number" value="10" class="form-control" id="RequiredInstallment" placeholder="Required Installments">
+            </div>
+            <div class="form-group">
+              <label for="Inflation">Expected Inflation Rate</label>
+              <input type="number" value="6" class="form-control" id="Inflation" placeholder="Expected Inflation Rate">
+            </div>
+            <div class="form-group">
+              <label for="StartMonth">Time to Goal Start (months)</label>
+              <input type="number" value="13" class="form-control" id="StartMonth" placeholder="Time to Goal Start (months)">
+            </div>
+            <div class="form-group">
+              <label for="Inflation">Short-Term Volatility</label>
+              <input type="number" value="10" class="form-control" id="shortterm" placeholder="Short-Term Volatility">
+              <p>
+                Try greater Short-Term Volatility :
+                <span id="suggestshort"></span>
+              </p>
+            </div>
+            <div class="form-group">
+              <label for="StartMonth">Long-Term Volatility</label>
+              <input type="number" value="10" class="form-control" id="longterm" placeholder="Long-Term Volatility">
+              <p>
+                Try greater Long-Term Volatility :
+                <span id="suggestlong"></span>
+              </p>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Submit</button>
+          </form>
+        </div>
+
+        <div class="col-md-9 suggestions">
+          <!-- <div class="spacer" style="height: 20px;"></div>
+          <blockquote class="text-uppercase">
+            <p>short term loss :
+              <span id="percent"></span>%</p>
+          </blockquote>
+          <blockquote class="text-uppercase">
+            <p>Goal chance :
+              <span id="goal"></span>%</p>
+          </blockquote>
+          <blockquote class="text-uppercase">
+            <p>Long Loss :
+              <span id="long"></span>%</p>
+          </blockquote> -->
+          <div class="spacer" style="height: 40px;"></div>
+          <div id="container" style="width: 100%; height: 400px; margin: 0 auto"></div>
+
+          <div class="fortable">
+            <div class="spacer" style="height: 40px;"></div>
+            <table class="table table-hover">
+              <tr>
+                <th>Equity</th>
+                <th>0%</th>
+                <th>10%</th>
+                <th>20%</th>
+                <th>30%</th>
+                <th>40%</th>
+                <th>50%</th>
+                <th>60%</th>
+                <th>70%</th>
+                <th>80%</th>
+                <th>90%</th>
+                <th>100%</th>
+              </tr>
+              <tr>
+                <th>Debt</th>
+                <th>100%</th>
+                <th>90%</th>
+                <th>80%</th>
+                <th>70%</th>
+                <th>60%</th>
+                <th>50%</th>
+                <th>40%</th>
+                <th>30%</th>
+                <th>20%</th>
+                <th>10%</th>
+                <th>0%</th>
+              </tr>
+              <tr>
+                <td>Goal</td>
+                <td>
+                  <span id="g0"></span>%</td>
+                <td>
+                  <span id="g1"></span>%</td>
+                <td>
+                  <span id="g2"></span>%</td>
+                <td>
+                  <span id="g3"></span>%</td>
+                <td>
+                  <span id="g4"></span>%</td>
+                <td>
+                  <span id="g5"></span>%</td>
+                <td>
+                  <span id="g6"></span>%</td>
+                <td>
+                  <span id="g7"></span>%</td>
+                <td>
+                  <span id="g8"></span>%</td>
+                <td>
+                  <span id="g9"></span>%</td>
+                <td>
+                  <span id="g10"></span>%</td>
+              </tr>
+              <tr>
+                <td>Short term loss</td>
+                <td>
+                  <span id="s0"></span>%</td>
+                <td>
+                  <span id="s1"></span>%</td>
+                <td>
+                  <span id="s2"></span>%</td>
+                <td>
+                  <span id="s3"></span>%</td>
+                <td>
+                  <span id="s4"></span>%</td>
+                <td>
+                  <span id="s5"></span>%</td>
+                <td>
+                  <span id="s6"></span>%</td>
+                <td>
+                  <span id="s7"></span>%</td>
+                <td>
+                  <span id="s8"></span>%</td>
+                <td>
+                  <span id="s9"></span>%</td>
+                <td>
+                  <span id="s10"></span>%</td>
+              </tr>
+              <tr>
+                <td>Long term loss</td>
+                <td>
+                  <span id="l0"></span>%</td>
+                <td>
+                  <span id="l1"></span>%</td>
+                <td>
+                  <span id="l2"></span>%</td>
+                <td>
+                  <span id="l3"></span>%</td>
+                <td>
+                  <span id="l4"></span>%</td>
+                <td>
+                  <span id="l5"></span>%</td>
+                <td>
+                  <span id="l6"></span>%</td>
+                <td>
+                  <span id="l7"></span>%</td>
+                <td>
+                  <span id="l8"></span>%</td>
+                <td>
+                  <span id="l9"></span>%</td>
+                <td>
+                  <span id="l10"></span>%</td>
+              </tr>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 suggestions">
+          <div class="spacer" style="height: 20px;"></div>
+          <blockquote class="text-uppercase">
+            <p>Lumpsum Contribution : Rs.
+              <span id="lumpsum"></span>
+            </p>
+          </blockquote>
+          <blockquote class="text-uppercase">
+            <p>Monthly Contribution : Rs.
+              <span id="monthly"></span>
+            </p>
+          </blockquote>
+          <blockquote class="text-uppercase">
+            <p>Monthly Contribution Nos. :
+              <span id="monthcontri"></span>
+              months</p>
+          </blockquote>
+          <blockquote class="text-uppercase">
+            <p>Installment Present Value : Rs.
+              <span id="installpresent"></span>
+            </p>
+          </blockquote>
+          <blockquote class="text-uppercase">
+            <p>Required Installments :
+              <span id="requireinstalls"></span>
+              months</p>
+          </blockquote>
+          <blockquote class="text-uppercase">
+            <p>Time to Goal Start (months) :
+              <span id="startmonth"></span>
+            </p>
+          </blockquote>
+          <div class="spacer" style="height: 40px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var minimumGoal = 50;
+      function addGreenRed(id, value, compare) {
+        $("#" + id).html(value);
+        $("#" + id).parents("td").removeClass("green");
+        $("#" + id).parents("td").removeClass("red");
+        if (value > compare) {
+          $("#" + id).parents("td").addClass("green");
+        } else {
+          $("#" + id).parents("td").addClass("red");
+        }
+      }
+
+      function submitForm() {
+        $data = {
+          lumpsum: parseInt(document.getElementById("LumpsumCont").value),
+          monthly: parseInt(document.getElementById("MonthlyCont").value),
+          noOfMonth: parseInt(document.getElementById("MonthlyContNo").value),
+          startMonth: parseInt(document.getElementById("StartMonth").value),
+          noOfInstallment: parseInt(document.getElementById("RequiredInstallment").value),
+          installment: parseInt(document.getElementById("Installment").value),
+          inflation: parseInt(document.getElementById("Inflation").value),
+          shortinput: parseInt(document.getElementById("shortterm").value),
+          longinput: parseInt(document.getElementById("longterm").value)
+        };
+
+        var feasible = [];
+        var goals = [];
+        var longinput = parseFloat(document.getElementById("longterm").value);
+        var shortinput = parseFloat(document.getElementById("shortterm").value);
+        var short = [];
+        var long = [];
+        for (var i = 0; i < 11; i++) {
+          goals[i] = 0;
+          short[i] = 0;
+          long[i] = 0;
+        }
+        $.ajax({
+          type: 'POST',
+          url: 'http://'+window.location.host+'/compute/alltypes2',
+          data: JSON.stringify($data),
+          success: function(data) {
+            var i = 0;
+
+            for (var i = 0; i < 11; i++) {
+              addGreenRed("g" + i, data.goals[i], minimumGoal);
+              addGreenRed("s" + i, -data.short[i], -shortinput);
+              addGreenRed("l" + i, -data.long[i], -longinput);
+
+              $("#s" + i).html(data.short[i]);
+              $("#l" + i).html(data.long[i]);
+            }
+            console.log(data.suggestions);
+            var i = 0;
+            var tempmids = [];
+            var tempmidl = [];
+            var midl = [];
+            var mids = [];
+            _.each(data.short, function(key) {
+              if (key > shortinput) {
+                tempmids.push(key);
+                i++;
+                if (i > 4) {
+                  mids = tempmids;
+                }
+              } else {
+                tempmids = [];
+                i = 0;
+              }
+            });
+            if (mids.length > 4) {
+              _.sortBy(mids, function(key) {
+                return key;
+              });
+              document.getElementById("suggestshort").innerHTML = mids[parseInt(mids.length / 2)];
+            }
+            _.each(data.long, function(key) {
+              if (key > longinput) {
+                tempmidl.push(key);
+                i++;
+                if (i > 4) {
+                  midl = tempmidl;
+                }
+              } else {
+                tempmidl = [];
+                i = 0;
+              }
+            });
+            if (midl.length > 4) {
+              _.sortBy(midl, function(key) {
+                return key;
+              });
+              document.getElementById("suggestlong").innerHTML = midl[parseInt(midl.length / 2)];
+            }
+
+            if (feasible == null || feasible == undefined || feasible.length != 1) {
+              if (data.suggestions) {
+                document.getElementById("lumpsum").innerHTML = data.suggestions.lumpsum;
+                document.getElementById("monthly").innerHTML = data.suggestions.monthly;
+                document.getElementById("monthcontri").innerHTML = data.suggestions.noOfMonth;
+                document.getElementById("installpresent").innerHTML = data.suggestions.installment;
+                document.getElementById("requireinstalls").innerHTML = data.suggestions.noOfInstallment;
+                document.getElementById("startmonth").innerHTML = data.suggestions.startMonth;
+                $(".suggestions").show();
+              } else {
+                document.getElementById("lumpsum").innerHTML = "NA";
+                document.getElementById("monthly").innerHTML = "NA";
+                document.getElementById("monthcontri").innerHTML = "NA";
+                document.getElementById("installpresent").innerHTML = "NA";
+                document.getElementById("requireinstalls").innerHTML = "NA";
+                document.getElementById("startmonth").innerHTML = "NA";
+                $(".suggestions").show();
+              }
+            }
+            if (data.value) {
+              // document.getElementById("percent").innerHTML = data.feasible[0].short;
+              // document.getElementById("goal").innerHTML = data.feasible[0].goal;
+              // document.getElementById("long").innerHTML = data.feasible[0].long;
+              $(".fortable").show();
+              $(".graphsec").show();
+              $("#container").show();
+              createGraph(data.feasible[0].tenures, data.feasible[0].median1, data.feasible[0].median50, data.feasible[0].median99, data.feasible[0].type, data.cashflow);
+
+            } else {
+              // document.getElementById("percent").innerHTML = 0;
+              // document.getElementById("goal").innerHTML = 0;
+              // document.getElementById("long").innerHTML = 0;
+
+              $(".fortable").show();
+              $("#container").hide();
+              $(".graphsec").hide();
+            }
+          },
+          contentType: 'application/json',
+          dataType: 'json'
+        });
+
+      }
+    </script>
+  </body>
+
+</html>

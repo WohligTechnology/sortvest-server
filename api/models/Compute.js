@@ -171,7 +171,6 @@ module.exports = {
     }
     return true;
   },
-
   alltypes: function(data, callback) {
     var cashflow = [];
     Compute.generateCashflow(data, cashflow);
@@ -305,6 +304,7 @@ module.exports = {
       });
       if (feasible.length === 0) {
         targetCashflow = [];
+        var suggestions ={};
         if (partialFeasible.length !== 0) {
           targetCashflow = _.cloneDeep(cashflow);
           //                    targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + partialFeasible[partialFeasible.length - 1].median50[cashflow.length - 1];
@@ -329,12 +329,12 @@ module.exports = {
             }
             i++;
             return num1 + num2;
-          })
+          });
           targetXirr = Compute.XIRR(targetCashflow, dates) * 100;
           targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
           //                    targetRate = 0.0029;
 
-          var suggestions = {
+          suggestions = {
             installment: Compute.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
             lumpsum: Compute.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
             monthly: Compute.suggestMonthly(data, inflationRate, targetRate, requiredRate, cashflow),
@@ -342,8 +342,10 @@ module.exports = {
             noOfMonth: Compute.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
             startMonth: Compute.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
           };
-        }
 
+        }
+        suggestions.shortinput = Math.ceil(parseFloat(short[0]));
+        suggestions.longinput = Math.ceil(parseFloat(long[0]));
         callback({
           value: false,
           short: short,
@@ -401,6 +403,8 @@ module.exports = {
             noOfMonth: Compute.suggestMonthlyContriNo(data, inflationRate, targetRate, requiredRate, cashflow),
             startMonth: Compute.suggestStartMonth(data, inflationRate, targetRate, requiredRate, cashflow)
           };
+          suggestions.shortinput = Math.ceil(parseFloat(feasible[0].short));
+          suggestions.longinput = Math.ceil(parseFloat(feasible[0].long));
           callback({
             value: true,
             short: short,

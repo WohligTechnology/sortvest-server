@@ -25,7 +25,7 @@ var schema = new Schema({
             default: ""
         }
     }],
-    goalName: {
+    goalname: {
         type: String,
         default: ""
     },

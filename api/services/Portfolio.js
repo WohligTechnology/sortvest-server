@@ -61,6 +61,10 @@ var schema = new Schema({
         type: Number,
         default: 0
     },
+    executiontime:{
+      type:Date,
+      default:Date.now()
+    },
     shortinput: {
         type: Number,
         default: 0

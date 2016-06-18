@@ -72,6 +72,10 @@ var schema = new Schema({
     longinput: {
         type: Number,
         default: 0
+    },
+    image:{
+      type:String,
+      default:""
     }
 });
 

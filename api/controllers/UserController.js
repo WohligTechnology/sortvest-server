@@ -109,7 +109,9 @@ module.exports = {
     if (req.session.user) {
       // console.log(JSON.stringify(req.session.user));
       res.json(
-        req.session.user
+          value: true,
+          data: {req.session.user}
+
       );
     } else {
       res.json({

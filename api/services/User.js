@@ -121,7 +121,7 @@ var schema = new Schema({
     default: ""
   },
   points: {
-    type: String,
+    type: Number,
     default: ""
   },
   referred: {
@@ -174,7 +174,8 @@ var models = {
                   message: "Invalid referralCode"
                 });
               } else {
-                // console.log("found", found);
+                console.log("found", found);
+
                 user.save(function(err, data2) {
                   if (err) {
                     console.log(err);
@@ -188,7 +189,8 @@ var models = {
                           name: data2.name,
                           user: data2._id
                         }
-                      }
+                      },
+                      points : found.points + 2000
                     }, function(err, saveres) {
                       if (err) {
                         console.log(err);

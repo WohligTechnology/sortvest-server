@@ -285,10 +285,6 @@ var models = {
     this.findOne({
       email: data.email,
       password: md5(data.password)
-    }).populate("referred.user", "name", null, {
-      sort: {
-        "name": 1
-      }
     }).lean().exec(function(err, found) {
       if (err) {
         console.log(err);

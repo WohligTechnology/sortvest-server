@@ -6,7 +6,7 @@ var schema = new Schema({
     name: String,
     email: String,
     password: String,
-    mobile: Number,
+    mobile: String,
     nominee: [{
         name: {
             type: String,

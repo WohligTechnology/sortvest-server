@@ -126,7 +126,6 @@ var schema = new Schema({
   },
   referred: {
     type: [{
-      name: String,
       user: {
         type: Schema.Types.ObjectId,
         ref: 'User'
@@ -170,38 +169,40 @@ var models = {
             if (err) {
               console.log(err);
             } else {
-              console.log("found", found);
-              user.save(function(err, data2) {
-                if (err) {
-                  console.log(err);
-                  callback(err, null);
-                } else {
-                  User.update({
-                    mobile: data.referralCode
-                  }, {
-                    $push: {
-                      referred: {
-                        name: data2.name,
-                        user: data2._id
+              if (_.isEmpty(found)) {
+                callback(null, {
+                  message: "Invalid referralCode"
+                });
+              } else {
+                // console.log("found", found);
+                user.save(function(err, data2) {
+                  if (err) {
+                    console.log(err);
+                    callback(err, null);
+                  } else {
+                    User.update({
+                      mobile: data.referralCode
+                    }, {
+                      $push: {
+                        referred: {
+                          name: data2.name,
+                          user: data2._id
+                        }
                       }
-                    }
-                  }, function(err, saveres) {
-                    if (err) {
-                      console.log(err);
-                      callback(err, null);
-                    } else {
-                      console.log(saveres);
-                      callback(null, saveres);
-                    }
-                  });
-                  // callback(null, data2);
-                }
-              });
-
-
-              // callback(null,found);
+                    }, function(err, saveres) {
+                      if (err) {
+                        console.log(err);
+                        callback(err, null);
+                      } else {
+                        // console.log(saveres);
+                        callback(null, data2);
+                      }
+                    });
+                    // callback(null, data2);
+                  }
+                });
+              }
             }
-
           });
 
         } else {
@@ -282,7 +283,11 @@ var models = {
     this.findOne({
       email: data.email,
       password: md5(data.password)
-    }).populate("referred.user", "name email", null, { sort: { "name": 1 } }).lean().exec(function(err, found) {
+    }).populate("referred.user", "name", null, {
+      sort: {
+        "name": 1
+      }
+    }).lean().exec(function(err, found) {
       if (err) {
         console.log(err);
         callback(err, null);

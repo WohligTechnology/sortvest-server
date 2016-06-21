@@ -49,16 +49,38 @@ module.exports = {
   },
 
   getSession: function(req, res) {
-    if (req.body) {
-      req.body._id = req.session.user._id;
-      User.getSession(req.body, res.callback);
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Request"
-      });
-    }
+      if (req.body) {
+          if (req.session.user) {
+              req.body._id = req.session.user._id;
+              User.getSession(req.body, function(err, data) {
+                  if (err) {
+                      res.json({
+                          value: false,
+                          data: err
+                      });
+                  } else {
+                      req.session.user = data;
+                      res.json({
+                          value: true,
+                          data:  data
+                      });
+                  }
+              });
+          } else {
+              res.json({
+                  value: false,
+                  data: "User not logged in"
+              });
+          }
+      } else {
+          res.json({
+              value: false,
+              data: "Invalid Call"
+          });
+      }
   },
+
+
   login: function(req, res) {
     if (req.body) {
       if (req.body.email && req.body.email !== "" && req.body.password && req.body.password !== "") {

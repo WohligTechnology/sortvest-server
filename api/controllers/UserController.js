@@ -108,11 +108,11 @@ module.exports = {
   getProfile: function(req, res) {
     if (req.session.user) {
       // console.log(JSON.stringify(req.session.user));
-      res.json(
+      res.json({
           value: true,
-          data: {req.session.user}
+          data: req.session.user
 
-      );
+      });
     } else {
       res.json({
         value: false,

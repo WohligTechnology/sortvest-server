@@ -324,7 +324,7 @@ var models = {
   getSession: function(data, callback) {
     User.findOne({
       _id: data._id
-    }, function(err, res) {
+    }).populate("referred.user", "name email", null, { sort: { "name": 1 } }).lean().exec(function(err, res) {
       if (err) {
         console.log(err);
         callback(err, null);

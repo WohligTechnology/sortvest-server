@@ -47,6 +47,18 @@ module.exports = {
       });
     }
   },
+
+  getSession: function(req, res) {
+    if (req.body) {
+      req.body._id = req.session.user._id;
+      User.getSession(req.body, res.callback);
+    } else {
+      res.json({
+        value: false,
+        data: "Invalid Request"
+      });
+    }
+  },
   login: function(req, res) {
     if (req.body) {
       if (req.body.email && req.body.email !== "" && req.body.password && req.body.password !== "") {

@@ -177,7 +177,7 @@ var models = {
                   callback(err, null);
                 } else {
                   User.update({
-                    mobile: data.mobile
+                    mobile: data.referralCode
                   }, {
                     $push: {
                       referred: {
@@ -282,7 +282,7 @@ var models = {
     this.findOne({
       email: data.email,
       password: md5(data.password)
-    }).lean().exec(function(err, found) {
+    }).populate("referred.user", "name email", null, { sort: { "name": 1 } }).lean().exec(function(err, found) {
       if (err) {
         console.log(err);
         callback(err, null);

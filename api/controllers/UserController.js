@@ -109,8 +109,8 @@ module.exports = {
     if (req.session.user) {
       // console.log(JSON.stringify(req.session.user));
       res.json({
-          value: true,
-          data: req.session.user
+        value: true,
+        data: req.session.user
 
       });
     } else {
@@ -121,13 +121,13 @@ module.exports = {
     }
   },
   logout: function(req, res) {
-      req.session.destroy(function(err) {
-        res.json({
-             data: "Logout Successful",
-             value: true
-         });
+    req.session.destroy(function(err) {
+      res.json({
+        data: "Logout Successful",
+        value: true
       });
-},
+    });
+  },
 
   editProfile: function(req, res) {
     if (req.body) {

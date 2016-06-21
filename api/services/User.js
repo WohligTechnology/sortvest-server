@@ -6,6 +6,7 @@ var schema = new Schema({
     name: String,
     email: String,
     password: String,
+    mobile: Number,
     nominee: [{
         name: {
             type: String,
@@ -124,8 +125,14 @@ var schema = new Schema({
         default: ""
     },
     referred: {
-        type: String,
-        default: ""
+      type: [{
+        name: String,
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: 'User'
+        }
+      }],
+      index: true
     },
     notification: [{
         title: {
@@ -149,7 +156,7 @@ var models = {
         console.log(data);
         user.timestamp = new Date();
         this.count({
-            email: data.email
+            mobile: data.mobile
         }, function(err, found) {
             if (err) {
                 console.log(err);

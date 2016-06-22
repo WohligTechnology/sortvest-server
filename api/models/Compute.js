@@ -330,10 +330,17 @@ module.exports = {
             i++;
             return num1 + num2;
           });
+
+          console.log(targetCashflow);
           targetXirr = Compute.XIRR(targetCashflow, dates) * 100;
+          
+
+          console.log(targetXirr);
           targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
           //                    targetRate = 0.0029;
-
+          console.log("TARGET RATE HERE");
+          console.log(targetRate);
+          console.log("END TARGET RATE");
           suggestions = {
             installment: Compute.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
             lumpsum: Compute.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
@@ -344,8 +351,8 @@ module.exports = {
           };
 
         }
-        suggestions.shortinput = Math.ceil(parseFloat(short[0]));
-        suggestions.longinput = Math.ceil(parseFloat(long[0]));
+        suggestions.shortinput = Math.ceil(parseFloat(short[10]));
+        suggestions.longinput = Math.ceil(parseFloat(long[10]));
         callback({
           value: false,
           short: short,
@@ -389,12 +396,19 @@ module.exports = {
             i++;
             return num1 + num2;
           });
+          console.log(targetCashflow);
 
           targetXirr = Compute.XIRR(targetCashflow, dates) * 100;
+          console.log(targetXirr);
 
+          console.log("XIRR TEST");
+            console.log(Compute.XIRR([-10000,15489],[new Date('2010-01-01'),new Date('2013-04-01')]));
+          console.log("XIRR TEST END");
           targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
           //                    targetRate = 0.0029;
-
+          console.log("TARGET RATE HERE");
+          console.log(targetRate);
+          console.log("END TARGET RATE");
           var suggestions = {
             installment: Compute.suggestInstallment(data, inflationRate, targetRate, requiredRate, cashflow),
             lumpsum: Compute.suggestLumpsum(data, inflationRate, targetRate, requiredRate, cashflow),
@@ -419,8 +433,18 @@ module.exports = {
     }
   },
   suggestInstallment: function(data, inflationRate, targetRate, requiredRate, cashflow) {
+    console.log("TEST CASE");
+
+    console.log(Compute.PV(0.08,10,-10000,0,0));
+
+    console.log("END HERER");
+
+
+    console.log("suggestInstallment");
     var futureValInn = Compute.FV(targetRate, data.noOfMonth, data.monthly, data.lumpsum, 0);
+    console.log(futureValInn);
     var futureVal = Compute.FV(targetRate, data.startMonth - data.noOfMonth, 0, futureValInn, 0);
+    console.log(futureVal);
     var installmentRight = (targetRate - inflationRate) / (1 - Math.pow(((1 + inflationRate) / (1 + targetRate)), data.noOfInstallment));
     var installmentDenominator = Math.pow((1 + inflationRate), (data.startMonth + 1));
     var result = (futureVal * installmentRight) / installmentDenominator;
@@ -454,8 +478,11 @@ module.exports = {
     return Math.ceil(result);
   },
   suggestRequiredInstallments: function(data, inflationRate, targetRate, requiredRate, cashflow) {
+    console.log("suggestRequiredInstallments");
     var futureValInn = Compute.FV(targetRate, data.noOfMonth, data.monthly, data.lumpsum, 0);
+    console.log(futureValInn);
     var futureValNumerator = Compute.FV(targetRate, data.startMonth - data.noOfMonth, 0, futureValInn, 0) * (targetRate - inflationRate);
+    console.log(futureValNumerator);
     var denominator = data.installment * Math.pow(1 + inflationRate, data.startMonth) + 1;
     var result = Math.log(1 - (futureValNumerator / denominator)) / Math.log((1 + inflationRate) / (1 + targetRate));
     return Math.floor(result);
@@ -471,7 +498,7 @@ module.exports = {
   },
   suggestMonthlyContriNo: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     // var denominator = Math.log()
-    var innerNumerator = (data.installment * Math.pow(1 + inflationRate, data.startMonth + 1)) * ((1 - Math.pow((1 + inflationRate) / (1 + targetRate), data.noOfInstallment)) / (targetRate - inflationRate)) - data.lumpsum;
+    var innerNumerator = (((data.installment * Math.pow(1 + inflationRate, data.startMonth + 1)) * ((1 - Math.pow((1 + inflationRate) / (1 + targetRate), data.noOfInstallment)) / (targetRate - inflationRate)))/Math.pow(1+targetRate,data.startMonth)) - data.lumpsum;
     var innerFraction = innerNumerator / data.monthly;
     var innerFraction2 = (1 / targetRate);
     var logterm = 1 / (targetRate * (innerFraction2 - innerFraction));
@@ -591,7 +618,6 @@ module.exports = {
     Grid.findGridByType(data, function(res, err) {
 
       res = res.slice(0, maxGrid);
-      console.log(res[res.length-1]);
       _.each(res, function(n) {
         var i = n.path - 1;
         var tenure = n.tenure;

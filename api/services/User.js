@@ -36,6 +36,10 @@ var schema = new Schema({
       type: String,
       default: ""
     },
+    country: {
+      type: String,
+      default: ""
+    },
     pincode: {
       type: String,
       default: ""
@@ -44,6 +48,10 @@ var schema = new Schema({
   dob: {
     type: Date,
     default: Date.now
+  },
+  placeofbirth:{
+    type: String,
+    default: ""
   },
   country: {
     type: String,
@@ -54,8 +62,8 @@ var schema = new Schema({
     default: ""
   },
   networth: {
-    type: String,
-    default: ""
+    type: Number,
+    default: 0
   },
   occupation: {
     type: String,

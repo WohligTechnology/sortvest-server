@@ -333,7 +333,7 @@ module.exports = {
 
           console.log(targetCashflow);
           targetXirr = Compute.XIRR(targetCashflow, dates) * 100;
-          
+
 
           console.log(targetXirr);
           targetRate = Math.pow(parseFloat(Math.abs(1 + targetXirr / 100)), parseFloat((1 / 12))) - 1;
@@ -448,7 +448,12 @@ module.exports = {
     var installmentRight = (targetRate - inflationRate) / (1 - Math.pow(((1 + inflationRate) / (1 + targetRate)), data.noOfInstallment));
     var installmentDenominator = Math.pow((1 + inflationRate), (data.startMonth + 1));
     var result = (futureVal * installmentRight) / installmentDenominator;
-    return Math.floor(result);
+    var final = Math.floor(result);
+    if(final < 0){
+      return 0;
+    }else{
+      return final;
+    }
   },
   suggestLumpsum: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     var fv = 0;
@@ -462,7 +467,13 @@ module.exports = {
       i++;
     });
     var result = Compute.PV(targetRate, data.noOfMonth, data.monthly, fv, 0);
-    return Math.ceil(result);
+
+    var final = Math.ceil(result);
+    if(final < 0){
+      return 0;
+    }else{
+      return final;
+    }
   },
   suggestMonthly: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     var fv = 0;
@@ -475,7 +486,13 @@ module.exports = {
       i++;
     });
     var result = Compute.PMT(targetRate, data.noOfMonth, data.lumpsum, fv, 0);
-    return Math.ceil(result);
+
+    var final =  Math.ceil(result);
+    if(final < 0){
+      return 0;
+    }else{
+      return final;
+    }
   },
   suggestRequiredInstallments: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     console.log("suggestRequiredInstallments");
@@ -485,7 +502,12 @@ module.exports = {
     console.log(futureValNumerator);
     var denominator = data.installment * Math.pow(1 + inflationRate, data.startMonth) + 1;
     var result = Math.log(1 - (futureValNumerator / denominator)) / Math.log((1 + inflationRate) / (1 + targetRate));
-    return Math.floor(result);
+    var final =  Math.floor(result);
+    if(final < 0){
+      return 0;
+    }else{
+      return final;
+    }
   },
   suggestStartMonth: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     var innerFraction1 = Math.pow(1 + targetRate, data.noOfMonth);
@@ -494,7 +516,12 @@ module.exports = {
     var numerator = innerFraction1 * data.installment * (1 + inflationRate) * innerFraction2;
     var logterm = numerator / denominator;
     var logresult = Math.log(logterm) / Math.log((1 + targetRate) / (1 + inflationRate));
-    return Math.max(Math.ceil(logresult), data.noOfMonth);
+    var final =  Math.max(Math.ceil(logresult), data.noOfMonth);
+    if(final < 0){
+      return 0;
+    }else{
+      return final;
+    }
   },
   suggestMonthlyContriNo: function(data, inflationRate, targetRate, requiredRate, cashflow) {
     // var denominator = Math.log()
@@ -503,7 +530,12 @@ module.exports = {
     var innerFraction2 = (1 / targetRate);
     var logterm = 1 / (targetRate * (innerFraction2 - innerFraction));
     var logresult = Math.log(logterm) / Math.log(1 + targetRate);
-    return Math.min(Math.ceil(logresult), data.startMonth);
+    var final =  Math.min(Math.ceil(logresult), data.startMonth);
+    if(final < 0){
+      return 0;
+    }else{
+      return final;
+    }
   },
   allpath: function(data, cashflow, callback) {
     var typeno = data.type;

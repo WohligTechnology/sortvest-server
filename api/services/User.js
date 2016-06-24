@@ -12,6 +12,10 @@ var schema = new Schema({
       type: String,
       default: ""
     },
+    forVerification:{
+      type:Boolean,
+      default:false
+    },
     guardianName: {
       type: String,
       default: ""

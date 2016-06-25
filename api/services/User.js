@@ -7,14 +7,14 @@ var schema = new Schema({
   email: String,
   password: String,
   mobile: String,
+  forVerification:{
+    type:Boolean,
+    default:false
+  },
   nominee: [{
     name: {
       type: String,
       default: ""
-    },
-    forVerification:{
-      type:Boolean,
-      default:false
     },
     guardianName: {
       type: String,

@@ -31,7 +31,6 @@ module.exports = {
           });
         });
       } else if (db) {
-        console.log(data);
         if (!data._id) {
           //                    console.log("in if");
           data._id = sails.ObjectID();
@@ -45,7 +44,6 @@ module.exports = {
               db.close();
 
             } else if (created) {
-              console.log("inside insert");
               callback({
                 value: true,
                 id: data._id

@@ -193,7 +193,7 @@ module.exports = {
 	},
 	findlimited: function(req, res) {
 		if (req.body) {
-			if (req.body.pagesize && req.body.pagesize != "" && req.body.pagenumber && req.body.pagenumber != "") {
+			if (req.body.pagesize && req.body.pagesize !== "" && req.body.pagenumber && req.body.pagenumber !== "") {
 				function callback(data) {
 					res.json(data);
 				};
@@ -221,9 +221,8 @@ module.exports = {
 				console.log(err);
 				res.send(err);
 			} else if (response) {
-				console.log("kmfdlmk");
 				res.json(response);
 			}
-		})
+		});
 	}
 };

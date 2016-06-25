@@ -167,7 +167,8 @@ var models = {
     console.log(data);
     user.timestamp = new Date();
     this.count({
-      mobile: data.mobile
+      mobile: data.mobile,
+      email:data.email
     }, function(err, found) {
       if (err) {
         console.log(err);

@@ -359,16 +359,6 @@ module.exports = {
                     suggestions: suggestions
                 });
             } else {
-                if (feasible.length == 1) {
-                    callback({
-                        value: true,
-                        short: short,
-                        goals: goals,
-                        long: long,
-                        feasible: feasible,
-                        cashflow: cashflow
-                    });
-                } else {
                     targetCashflow = [];
                     targetCashflow = _.cloneDeep(cashflow);
                     //                    targetCashflow[targetCashflow.length - 1] = targetCashflow[targetCashflow.length - 1] + feasible[feasible.length - 1].median50[feasible[feasible.length - 1].median50.length - 1];
@@ -417,16 +407,28 @@ module.exports = {
                     };
                     suggestions.shortinput = Math.ceil(parseFloat(feasible[0].short));
                     suggestions.longinput = Math.ceil(parseFloat(feasible[0].long));
-                    callback({
-                        value: true,
-                        short: short,
-                        goals: goals,
-                        long: long,
-                        feasible: feasible,
-                        cashflow: cashflow,
-                        suggestions: suggestions
-                    });
-                }
+                    if(feasible.length == 1 && feasible[0].goal < 55){
+                      feasible[0].median50 =  feasible[0].median50.slice(0, feasible[0].median50.length-1);
+                      callback({
+                          value: true,
+                          short: short,
+                          goals: goals,
+                          long: long,
+                          feasible: feasible,
+                          cashflow: cashflow
+                      });
+                    }else{
+                      feasible[0].median50 =  feasible[0].median50.slice(0, feasible[0].median50.length-1);
+                      callback({
+                          value: true,
+                          short: short,
+                          goals: goals,
+                          long: long,
+                          feasible: feasible,
+                          cashflow: cashflow,
+                          suggestions: suggestions
+                      });
+                    }
             }
         }
     },

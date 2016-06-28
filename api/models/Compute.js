@@ -418,7 +418,7 @@ module.exports = {
                           cashflow: cashflow
                       });
                     }else{
-                      feasible[0].median50 =  feasible[0].median50.slice(0, feasible[0].median50.length-1);
+                      feasible[feasible.length - 1].median50 =  feasible[feasible.length - 1].median50.slice(0, feasible[feasible.length - 1].median50.length-1);
                       callback({
                           value: true,
                           short: short,

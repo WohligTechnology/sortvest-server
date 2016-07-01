@@ -4,20 +4,6 @@
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
-var type0 = require('../../computedata/findGridByType0.json');
-var type10 = require('../../computedata/findGridByType10.json');
-var type20 = require('../../computedata/findGridByType20.json');
-var type30 = require('../../computedata/findGridByType30.json');
-var type40 = require('../../computedata/findGridByType40.json');
-var type50 = require('../../computedata/findGridByType50.json');
-var type60 = require('../../computedata/findGridByType60.json');
-var type70 = require('../../computedata/findGridByType70.json');
-var type80 = require('../../computedata/findGridByType80.json');
-var type90 = require('../../computedata/findGridByType90.json');
-var type100 = require('../../computedata/findGridByType100.json');
-
-
-
 
 module.exports = {
 
@@ -475,42 +461,44 @@ module.exports = {
   findGridByType: function(data, callback) {
     ch = data.type;
     var res;
+
+
     switch (ch) {
       case "0%":
-        res = type0;
+        res = require('../../computedata/findGridByType0.json');
         break;
       case "10%":
-        res = type10;
+        res = require('../../computedata/findGridByType10.json');
         break;
       case "20%":
-        res = type20;
+        res = require('../../computedata/findGridByType20.json');
         break;
       case "30%":
-        res = type30;
+        res = require('../../computedata/findGridByType30.json');
         break;
       case "40%":
-        res = type40;
+        res = require('../../computedata/findGridByType40.json');
         break;
       case "50%":
-        res = type50;
+        res = require('../../computedata/findGridByType50.json');
         break;
       case "60%":
-        res = type60;
+        res = require('../../computedata/findGridByType60.json');
         break;
       case "70%":
-        res = type70;
+        res = require('../../computedata/findGridByType70.json');
         break;
       case "80%":
-        res = type80;
+        res = require('../../computedata/findGridByType80.json');
         break;
       case "90%":
-        res = type90;
+        res = require('../../computedata/findGridByType90.json');
         break;
       case "100%":
-        res = type100;
+        res = require('../../computedata/findGridByType100.json');
         break;
       default:
-          res = type0;
+          res = require('../../computedata/findGridByType0.json');
           break;
     }
 

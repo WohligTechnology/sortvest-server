@@ -204,6 +204,9 @@ module.exports = {
 
     },
     alltypes2: function(data, callback) {
+
+    
+
         var cashflow = [];
         var targetCashflow = [];
         var dates = [];

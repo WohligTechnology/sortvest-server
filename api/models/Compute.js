@@ -285,7 +285,7 @@ module.exports = {
                         goal: goals[i],
                         long: long[i]
                     });
-                    if (goals[i] > 50) {
+                    if (goals[i] >= 50) {
 
                         feasible.push({
                             type: i,

@@ -410,7 +410,7 @@ module.exports = {
                     };
                     suggestions.shortinput = Math.ceil(parseFloat(feasible[0].short));
                     suggestions.longinput = Math.ceil(parseFloat(feasible[0].long));
-                    if(feasible.length == 1 && feasible[0].goal < 55 ){
+                    if(feasible.length == 1 && feasible[0].goal < 55 && Math.abs(data.shortinput-suggestions.shortinput) < 2 && Math.abs(data.longinput-suggestions.longinput) < 2 ){
                       feasible[0].median50 =  feasible[0].median50.slice(1);
                       callback({
                           value: true,

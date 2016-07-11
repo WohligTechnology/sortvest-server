@@ -1,5 +1,5 @@
 /**
- * Plan.js
+ * Config.js
  *
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
@@ -11,19 +11,65 @@ var fs = require("fs");
 var lwip = require("lwip");
 var process = require('child_process');
 var lodash = require('lodash');
+var moment = require('moment');
 var MaxImageSize = 1200;
-
+var request = require("request");
+var requrl = "http://localhost:80/";
+// var requrl = "http://localhost:90/"; ///////////////////////////////////////////////////change kar
 var gfs = Grid(mongoose.connections[0].db, mongoose);
 gfs.mongo = mongoose.mongo;
-
 var Schema = mongoose.Schema;
+
 var schema = new Schema({
-    name: String
+    name: String,
+    content: String,
 });
-
 module.exports = mongoose.model('Config', schema);
-
 var models = {
+
+    saveData: function(data, callback) {
+        var config = this(data);
+        if (data._id) {
+            this.findOneAndUpdate({
+                _id: data._id
+            }, data, function(err, data2) {
+                if (err) {
+                    callback(err, null);
+                } else {
+                    callback(null, data2);
+                }
+            });
+        } else {
+            config.save(function(err, data2) {
+                if (err) {
+                    callback(err, null);
+                } else {
+                    callback(null, data2);
+                }
+            });
+        }
+
+    },
+    getAll: function(data, callback) {
+        this.find({}, {}, {}, function(err, deleted) {
+            if (err) {
+                callback(err, null);
+            } else {
+                callback(null, deleted);
+            }
+        });
+    },
+    deleteData: function(data, callback) {
+        this.findOneAndRemove({
+            _id: data._id
+        }, function(err, deleted) {
+            if (err) {
+                callback(err, null)
+            } else {
+                callback(null, deleted)
+            }
+        });
+    },
     GlobalCallback: function(err, data, res) {
         if (err) {
             res.json({
@@ -240,12 +286,33 @@ var models = {
                                 newHeight = height;
                             }
                             image.resize(parseInt(newWidth), parseInt(newHeight), function(err, image2) {
-                                image2.writeFile('./.tmp/uploads/' + filename, function(err) {
-                                    writer2('./.tmp/uploads/' + filename, newNameExtire, {
-                                        width: newWidth,
-                                        height: newHeight
+
+                                if (style == "cover") {
+
+                                    image2.crop(parseInt(width), parseInt(height), function(err, image3) {
+                                        if (err) {
+
+                                        } else {
+
+                                            image3.writeFile('./.tmp/uploads/' + filename, function(err) {
+                                                writer2('./.tmp/uploads/' + filename, newNameExtire, {
+                                                    width: newWidth,
+                                                    height: newHeight
+                                                });
+                                            });
+                                        }
                                     });
-                                });
+
+
+
+                                } else {
+                                    image2.writeFile('./.tmp/uploads/' + filename, function(err) {
+                                        writer2('./.tmp/uploads/' + filename, newNameExtire, {
+                                            width: newWidth,
+                                            height: newHeight
+                                        });
+                                    });
+                                }
                             });
                         });
                     });
@@ -257,6 +324,134 @@ var models = {
         }
         //error handling, e.g. file does not exist
     },
-
+    email: function(data, callback) {
+        Password.find().exec(function(err, userdata) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (userdata && userdata.length > 0) {
+                if (data.filename && data.filename !== "") {
+                    request.post({
+                        url: requrl + "config/emailReader/",
+                        json: data
+                    }, function(err, http, body) {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            if (body && body.value !== false) {
+                                var sendgrid = require("sendgrid")(userdata[0].name);
+                                sendgrid.send({
+                                    to: data.email,
+                                    from: "support@sortvest.com",
+                                    subject: data.subject,
+                                    fromname: 'Sortvest Support',
+                                    html: body
+                                }, function(err, json) {
+                                    if (err) {
+                                        callback(err, null);
+                                    } else {
+                                        callback(null, json);
+                                    }
+                                });
+                            } else {
+                                callback({ message: "Some error in html" }, null);
+                            }
+                        }
+                    });
+                } else {
+                    callback({ message: "Please provide params" }, null);
+                }
+            } else {
+                callback({ message: "No api keys found" }, null);
+            }
+        });
+    },
+    message: function(data, callback) {
+        if (data.mobile || data.mobileno) {
+            request.get({
+                url: "http://etsdom.kapps.in/webapi/wohlig/api/gofish_sms.py?sms_text=" + data.content + "&mobile_number=" + data.mobile
+            }, function(err, http, body) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(body);
+                }
+            });
+        } else {
+            callback({ message: "Mobile number not found" }, null);
+        }
+    },
+    message2: function(data, callback) {
+        if (data.mobile || data.mobileno) {
+            request.get({
+                url: "http://etsdom.kapps.in/webapi/wohlig/api/gofish_sms.py?sms_text=" + data.content + "&mobile_number=" + data.mobile
+            }, function(err, http, body) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    console.log(body);
+                    callback(null, body);
+                }
+            });
+        } else {
+            callback({ message: "Mobile number not found" }, null);
+        }
+    },
+    checkCall: function(data, callback) {
+        Booking.findOne({
+            _id: data._id
+        }).populate("user", "-_id mobile").populate("expert", "-_id mobileno").lean().exec(function(err, data2) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (_.isEmpty(data2)) {
+                console.log("No calls found");
+                callback({ mesage: "No calls found" }, null);
+            } else {
+                if (data2.user && data2.user.mobile) {
+                    console.log("Calls found");
+                    console.log(data2);
+                    data2.callDuration = parseInt(data2.callDuration.split(" ")[0]);
+                    data2.callDuration = data2.callDuration * 60;
+                    data2.callTime = moment(data2.callTime).add(5, "hours").add(30, "minutes").format("YYYY-MM-DD HH:mm");
+                    // data2.callTime = moment(data2.callTime).format("YYYY-MM-DD HH:mm");
+                    console.log(data2.callTime);
+                    data2.endTime = moment(data2.callTime).add(data2.callDuration, 's').format("YYYY-MM-DD HH:mm");
+                    console.log(data2.endTime);
+                    request.get({ url: "http://etsdom.kapps.in/webapi/wohlig/api/wohlig_c2c.py?customer_number=+91" + data2.user.mobile + "&agent_number=+91" + data2.expert.mobileno + "&call_duration=" + data2.callDuration + "&call_start_time=" + data2.callTime + "&call_stop_time=" + data2.endTime + "&auth_key=bb23a8a029-8bd4-4e44-97ccaa" }, function(err, http, body) {
+                        if (err) {
+                            console.log("error", err);
+                            callback(err, null);
+                        } else {
+                            console.log(body);
+                            body = JSON.parse(body);
+                            if (body && body.callId) {
+                                Booking.update({
+                                    _id: data._id
+                                }, {
+                                    $set: {
+                                        callId: body.callId
+                                    }
+                                }, function(err, respo) {
+                                    if (err) {
+                                        console.log(err);
+                                        callback(err, null);
+                                    } else {
+                                        callback(null, { mesage: "Calls found" });
+                                    }
+                                });
+                            } else {
+                                callback({ message: "Some error" }, null);
+                            }
+                        }
+                    });
+                } else {
+                    callback({ message: "User mobile number not found" }, null);
+                }
+            }
+        });
+    },
 };
 module.exports = _.assign(module.exports, models);

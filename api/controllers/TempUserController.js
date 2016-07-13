@@ -75,8 +75,22 @@ module.exports = {
           });
       }
   },
-  emailVerification:function(){
-
+  emailVerification:function(req,res){
+    if (req.body) {
+      if (req.body.verifyemail && req.body.verifyemail !== ""){
+        TempUser.emailVerification(req.body, res.callback);
+      }else{
+        res.json({
+          value: false,
+          data: "invalid params"
+        });
+      }
+    } else {
+      res.json({
+        value: false,
+        data: "Invalid Request"
+      });
+    }
   },
   login: function(req, res) {
     if (req.body) {

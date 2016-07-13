@@ -203,7 +203,9 @@ var models = {
                           user: data2._id
                         }
                       },
-                      points : found.points + 2000
+                      $inc:{
+                        points:2000
+                      }
                     }, function(err, saveres) {
                       if (err) {
                         console.log(err);
@@ -228,6 +230,35 @@ var models = {
       }
     });
   },
+    saveAsIs: function(data, callback) {
+      console.log("saveAsIs",data);
+      var user = this(data);
+      user.timestamp = new Date();
+      if (data._id) {
+        this.findOneAndUpdate({
+          _id: data._id
+        }, data).exec(function(err, updated) {
+          if (err) {
+            console.log(err);
+            callback(err, null);
+          } else if (updated) {
+            callback(null, updated);
+          } else {
+            callback(null, {});
+          }
+        });
+      } else {
+        user.save(function(err, created) {
+          if (err) {
+            callback(err, null);
+          } else if (created) {
+            callback(null, created);
+          } else {
+            callback(null, {});
+          }
+        });
+      }
+    },
   deleteData: function(data, callback) {
     this.findOneAndRemove({
       _id: data._id

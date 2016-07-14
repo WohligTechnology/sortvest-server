@@ -134,7 +134,7 @@ var schema = new Schema({
   },
   points: {
     type: Number,
-    default: ""
+    default: 0
   },
   referred: {
     type: [{

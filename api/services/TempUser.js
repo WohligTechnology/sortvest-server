@@ -135,7 +135,7 @@ var schema = new Schema({
     },
     points: {
         type: Number,
-        default: ""
+        default: 0
     },
     referred: {
         type: [{
@@ -197,7 +197,7 @@ var models = {
                                 emailData.email = data.email;
                                 console.log(data);
                                 emailData.content = "Hello, please click on the button below to verify your email :";
-                                emailData.link = "http://sortvest2.com/verifyemail/" + text + "00x00" + TempUser.encrypt(data.email, 9);
+                                emailData.link = "http://localhost:8080/#/verifyemail/" + text + "00x00" + TempUser.encrypt(data.email, 9);
                                 emailData.filename = "emailverify.ejs";
                                 emailData.subject = "Email Verification";
                                 Config.email(emailData, function(err, emailRespo) {
@@ -255,7 +255,10 @@ var models = {
     emailVerification: function(data, callback) {
         var splitIt = data.verifyemail.split("00x00");
         var verify = splitIt[0];
-        var email = TempUser.decrypt(splitIt[1], 9);
+        if (splitIt[1])
+            {
+              var email = TempUser.decrypt(splitIt[1], 9);
+            }
         TempUser.findOneAndUpdate({
             verifyemail: md5(verify),
             email: email
@@ -273,36 +276,36 @@ var models = {
                     var updated = data2.toObject();
                     updated.verifyemail = "";
                     delete updated._id;
-                    User.saveAsIs(updated,function(err, data2) {
-                      if (err) {
-                        console.log(err);
-                        callback(err, null);
-                      } else {
-                        console.log(data2);
-                        User.update({
-                          mobile: updated.referralCode
-                        }, {
-                          $push: {
-                            referred: {
-                              name: data2.name,
-                              user: data2._id
-                            }
-                          },
-                          $inc:{
-                            points:2000
-                          }
-                        }, function(err, saveres) {
-                          console.log(saveres);
-                          if (err) {
+                    User.saveAsIs(updated, function(err, data2) {
+                        if (err) {
                             console.log(err);
                             callback(err, null);
-                          } else {
-                            // console.log(saveres);
-                            callback(null, data2);
-                          }
-                        });
-                        // callback(null, data2);
-                      }
+                        } else {
+                            console.log(data2);
+                            User.update({
+                                mobile: updated.referralCode
+                            }, {
+                                $push: {
+                                    referred: {
+                                        name: data2.name,
+                                        user: data2._id
+                                    }
+                                },
+                                $inc: {
+                                    points: 2000
+                                }
+                            }, function(err, saveres) {
+                                console.log(saveres);
+                                if (err) {
+                                    console.log(err);
+                                    callback(err, null);
+                                } else {
+                                    // console.log(saveres);
+                                    callback(null, data2);
+                                }
+                            });
+                            // callback(null, data2);
+                        }
                     });
                     // User.saveData(updated, function(err, data4) {
                     //   if(err){

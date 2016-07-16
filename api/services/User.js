@@ -6,6 +6,10 @@ var schema = new Schema({
   name: String,
   email: String,
   password: String,
+  forgotpassword: {
+    type: String,
+    default: ""
+  },
   mobile: String,
   forVerification:{
     type:Boolean,
@@ -66,8 +70,7 @@ var schema = new Schema({
     default: ""
   },
   networth: {
-    type: Number,
-    default: 0
+    type: Number
   },
   occupation: {
     type: String,
@@ -324,6 +327,66 @@ var models = {
       }
     });
   },
+  forgotPassword: function(data, callback) {
+      this.findOne({
+          email: data.email
+      }, {
+          password: 0,
+          forgotpassword: 0
+      }, function(err, found) {
+          if (err) {
+              console.log(err);
+              callback(err, null);
+          } else {
+              if (found) {
+                  if (!found.oauthLogin || (found.oauthLogin && found.oauthLogin.length <= 0)) {
+                      var text = "";
+                      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                      for (var i = 0; i < 8; i++) {
+                          text += possible.charAt(Math.floor(Math.random() * possible.length));
+                      }
+                      var encrypttext = md5(text);
+                      User.findOneAndUpdate({
+                          _id: found._id
+                      }, {
+                          forgotpassword: encrypttext
+                      }, function(err, data2) {
+                          if (err) {
+                              console.log(err);
+                              callback(err, null);
+                          } else {
+                              var emailData = {};
+                              emailData.email = data.email;
+                              console.log('data.email', data.email);
+                              emailData.content = "Your new password for the Sortvest website is: " + text + ".Please note that this is a system generated password which will remain valid for 3 hours only. Kindly change it to something you would be more comfortable remembering at the earliest.";
+                              emailData.filename = "forgotpassword.ejs";
+                              emailData.subject = "Forgot Password";
+                              Config.email(emailData, function(err, emailRespo) {
+                                  if (err) {
+                                      console.log(err);
+                                      callback(err, null);
+                                  } else {
+                                      console.log(emailRespo);
+                                      callback(null, {
+                                          comment: "Mail Sent"
+                                      });
+                                  }
+                              });
+                          }
+                      });
+                  } else {
+                      callback(null, {
+                          comment: "User logged in through social login"
+                      });
+                  }
+              } else {
+                  callback(null, {
+                      comment: "User not found"
+                  });
+              }
+          }
+      });
+  },
 
   login: function(data, callback) {
     this.findOne({
@@ -335,10 +398,55 @@ var models = {
         callback(err, null);
       } else {
         if (_.isEmpty(found)) {
-          callback(null, {});
+          console.log(found);
+            User.findOne({
+                email: data.email,
+                forgotpassword: md5(data.password)
+            }, function(err, data4) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                  console.log(data4);
+                    if (_.isEmpty(data4)) {
+                        callback(null, {
+                            comment: "User Not Found"
+                        });
+                    } else {
+                      console.log('Hererereaeaopdiasopidapsodipaos');
+                        User.findOneAndUpdate({
+                            _id: data4._id
+                        }, {
+                            password: md5(data.password),
+                            forgotpassword: ""
+                        }, function(err, data5) {
+                            if (err) {
+                                console.log(err);
+                                callback(err, null);
+                            } else {
+                                data5.password = "";
+                                data5.forgotpassword = "";
+                                callback(null, data5);
+                            }
+                        });
+                    }
+                }
+            });
         } else {
-          delete found.password;
-          callback(null, found);
+            User.findOneAndUpdate({
+                _id: found._id
+            }, {
+                forgotpassword: ""
+            }, function(err, data3) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    data3.password = "";
+                    data3.forgotpassword = "";
+                    callback(null, data3);
+                }
+            });
         }
       }
     });

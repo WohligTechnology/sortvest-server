@@ -47,6 +47,23 @@ module.exports = {
       });
     }
   },
+  forgotPassword: function(req, res) {
+      if (req.body) {
+          if (req.body.email && req.body.email !== "") {
+              User.forgotPassword(req.body, res.callback);
+          } else {
+              res.json({
+                  value: false,
+                  data: "Please provide email-id"
+              });
+          }
+      } else {
+          res.json({
+              value: false,
+              data: "Invalid Call"
+          });
+      }
+  },
 
   getSession: function(req, res) {
       if (req.body) {

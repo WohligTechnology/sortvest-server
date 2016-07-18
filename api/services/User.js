@@ -234,7 +234,7 @@ var models = {
     });
   },
     saveAsIs: function(data, callback) {
-      console.log("saveAsIs",data);
+      
       var user = this(data);
       user.timestamp = new Date();
       if (data._id) {

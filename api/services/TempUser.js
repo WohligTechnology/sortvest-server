@@ -6,6 +6,10 @@ var schema = new Schema({
     name: String,
     email: String,
     verifyemail: String,
+    verifyotp:{
+      type:Boolean,
+      default:false
+    },
     password: String,
     mobile: String,
     forVerification: {
@@ -197,7 +201,9 @@ var models = {
                                 emailData.email = data.email;
                                 console.log(data);
                                 emailData.content = "Hello, please click on the button below to verify your email :";
-                                emailData.link = "http://localhost:8080/#/verifyemail/" + text + "00x00" + TempUser.encrypt(data.email, 9);
+                                var encryptVerEm =  text + "00x00" + TempUser.encrypt(data.email, 9);
+                                console.log(encryptVerEm);
+                                emailData.link = "http://sortvest.com/#/verifyemail/"+encryptVerEm;
                                 emailData.filename = "emailverify.ejs";
                                 emailData.subject = "Email Verification";
                                 Config.email(emailData, function(err, emailRespo) {
@@ -205,41 +211,26 @@ var models = {
                                         callback(err, null);
                                     } else {
                                         console.log(emailRespo);
-                                        user.save(function(err, data3) {
-                                            if (err) {
-                                                callback(err, null);
-                                            } else {
-                                                callback(null, data3);
-                                            }
+                                        Otp.saveData({
+                                          contact:user.mobile
+                                        },function (err,data) {
+                                          if(err){
+                                            callback(err,null);
+                                          }else if(data){
+                                            user.save(function(err, data3) {
+                                                if (err) {
+                                                    callback(err, null);
+                                                } else {
+                                                    callback(null, data3);
+                                                }
+                                            });
+                                          }else{
+                                            callback(null,null);
+                                          }
                                         });
                                     }
                                 });
-                                // user.save(function(err, data2) {
-                                //   if (err) {
-                                //     console.log(err);
-                                //     callback(err, null);
-                                //   } else {
-                                //     TempUser.update({
-                                //       mobile: data.referralCode
-                                //     }, {
-                                //       $push: {
-                                //         referred: {
-                                //           name: data2.name,
-                                //           user: data2._id
-                                //         }
-                                //       },
-                                //       points : found.points + 2000
-                                //     }, function(err, saveres) {
-                                //       if (err) {
-                                //         console.log(err);
-                                //         callback(err, null);
-                                //       } else {
-                                //         callback(null, data2);
-                                //       }
-                                //     });
-                                //     // callback(null, data2);
-                                //   }
-                                // });
+
                             }
                         }
                     });
@@ -255,9 +246,10 @@ var models = {
     emailVerification: function(data, callback) {
         var splitIt = data.verifyemail.split("00x00");
         var verify = splitIt[0];
+        var email = "";
         if (splitIt[1])
             {
-              var email = TempUser.decrypt(splitIt[1], 9);
+               email = TempUser.decrypt(splitIt[1], 9);
             }
         TempUser.findOneAndUpdate({
             verifyemail: md5(verify),
@@ -270,9 +262,13 @@ var models = {
             if (err) {
                 callback(err, null);
             } else {
+              console.log(data2);
                 if (!data2 && _.isEmpty(data2)) {
                     callback("User already verified", null);
                 } else {
+                  if(data2.verifyotp !== true){
+                    callback("Please complete mobile verification",null);
+                  }else{
                     var updated = data2.toObject();
                     updated.verifyemail = "";
                     delete updated._id;
@@ -307,12 +303,13 @@ var models = {
                             // callback(null, data2);
                         }
                     });
+                  }
                     // User.saveData(updated, function(err, data4) {
                     //   if(err){
                     //     callback(err, data4);
                     //   }else if(data4){
                     //     var removeTemp = data2.toObject();
-                    //     removeTemp.verifyemail= "";
+                    //     removeTemp.yemail= "";
                     //     TempUser.editProfile(removeTemp,function (err,done) {
                     //       callback(err,done);
                     //     }) ;
@@ -325,6 +322,35 @@ var models = {
         });
 
     },
+      saveAsIs: function(data, callback) {
+
+        var user = this(data);
+        user.timestamp = new Date();
+        if (data._id) {
+          this.findOneAndUpdate({
+            _id: data._id
+          }, data).exec(function(err, updated) {
+            if (err) {
+              console.log(err);
+              callback(err, null);
+            } else if (updated) {
+              callback(null, updated);
+            } else {
+              callback(null, {});
+            }
+          });
+        } else {
+          user.save(function(err, created) {
+            if (err) {
+              callback(err, null);
+            } else if (created) {
+              callback(null, created);
+            } else {
+              callback(null, {});
+            }
+          });
+        }
+      },
     encrypt: function(plaintext, shiftAmount) {
         var ciphertext = "";
         for (var i = 0; i < plaintext.length; i++) {
@@ -458,6 +484,9 @@ var models = {
                 });
             }
         });
+    },
+    shiftUser:function (data,callback) {
+
     },
     getSession: function(data, callback) {
         TempUser.findOne({

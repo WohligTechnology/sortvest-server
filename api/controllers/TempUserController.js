@@ -207,6 +207,18 @@ module.exports = {
     }
   },
 
+  saveItAsIs: function(req, res) {
+    if (req.body) {
+      console.log(req.body);
+    TempUser.saveAsIs(req.body, res.callback);
+    } else {
+      res.json({
+        value: false,
+        data: "Invalid Request"
+      });
+    }
+  },
+
   delete: function(req, res) {
     if (req.body) {
       console.log(req.body);

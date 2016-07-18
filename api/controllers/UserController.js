@@ -226,6 +226,18 @@ module.exports = {
     }
   },
 
+  saveItAsIs: function(req, res) {
+    if (req.body) {
+      console.log(req.body);
+      User.saveAsIs(req.body, res.callback);
+    } else {
+      res.json({
+        value: false,
+        data: "Invalid Request"
+      });
+    }
+  },
+
   getAll: function(req, res) {
     function callback(err, data) {
       Global.response(err, data, res);

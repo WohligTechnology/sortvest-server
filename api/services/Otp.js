@@ -20,7 +20,7 @@ d.setMinutes(d.getMinutes() - 10);
 module.exports = mongoose.model("Otp", schema);
 var model = {
     saveData: function(data, callback) {
-        data.otp = (Math.random() + "").substring(2, 6);
+        data.otp = (Math.random() + "").substring(2, 8);
         var otp = this(data);
         this.count({
             contact: data.contact
@@ -36,14 +36,17 @@ var model = {
                             callback(err, null);
                         } else {
                             request.get({
-                                url: "http://api-alerts.solutionsinfini.com/v3/?method=sms&api_key=A9da87d58f64f269c1fd24d7aafe36ba7&to=" + data.contact + "&sender=ApLion&message=Dear User, One Time Password (OTP) to complete your mobile number verification is " + data.otp + "&format=json"
+                                url: "http://api-alerts.solutionsinfini.com/v3/?method=sms&api_key=Accfcbe3dd1296a7def430bb0678279b3&to=" + data.contact + "&sender=SRTVST&message=Dear User, One Time Password (OTP) to complete your mobile number verification is " + data.otp + "&format=json"
                             }, function(err, http, body) {
                                 if (err) {
                                     console.log(err);
                                     callback(err, null);
                                 } else {
                                     console.log(body);
-                                    callback(null, data2);
+
+                                    var resp = data2.toObject();
+                                    delete resp.otp;
+                                    callback(null, resp);
                                 }
                             });
                         }
@@ -58,13 +61,14 @@ var model = {
                             callback(err, null);
                         } else {
                             request.get({
-                                url: "http://api-alerts.solutionsinfini.com/v3/?method=sms&api_key=A9da87d58f64f269c1fd24d7aafe36ba7&to=" + data.contact + "&sender=ApLion&message=Dear User, One Time Password (OTP) to complete your mobile number verification is " + data.otp + "&format=json"
+                                url: "http://api-alerts.solutionsinfini.com/v3/?method=sms&api_key=Accfcbe3dd1296a7def430bb0678279b3&to=" + data.contact + "&sender=SRTVST&message=Dear User, One Time Password (OTP) to complete your mobile number verification is " + data.otp + "&format=json"
                             }, function(err, http, body) {
                                 if (err) {
                                     console.log(err);
                                     callback(err, null);
                                 } else {
                                     console.log(body);
+                                    delete data.otp;
                                     callback(null, data);
                                 }
                             });
@@ -75,26 +79,66 @@ var model = {
         });
     },
     checkOtp: function(data, callback) {
-        Otp.findOne({
+        Otp.findOneAndUpdate({
             contact: data.contact,
             otp: data.otp,
             timestamp: {
                 $gte: d
             }
+        },{
+          $set:{
+            otp:""
+          }
         }, function(err, data2) {
             if (err) {
                 console.log(err);
                 callback(err, null);
             } else {
                 if (data2 !== null) {
-                    User.saveData(data, function(err, data3) {
-                        if (err) {
-                            console.log(err);
-                            callback(err, null);
-                        } else {
-                            callback(err, data3);
-                        }
-                    });
+                  TempUser.findOneAndUpdate({
+                    mobile: data.contact
+                  },{
+                    $set:{
+                      "verifyotp":true
+                    }
+                  },function (err,data2) {
+                    if(data2.verifyemail !== ""){
+                      callback("Please complete email verification",null);
+                    }else{
+                      var updated = data2.toObject();
+                      delete updated._id;
+                      User.saveAsIs(updated, function(err, data2) {
+                          if (err) {
+                              console.log(err);
+                              callback(err, null);
+                          } else {
+                              console.log(data2);
+                              User.update({
+                                  mobile: updated.referralCode
+                              }, {
+                                  $push: {
+                                      referred: {
+                                          name: data2.name,
+                                          user: data2._id
+                                      }
+                                  },
+                                  $inc: {
+                                      points: 2000
+                                  }
+                              }, function(err, saveres) {
+                                  if (err) {
+                                      console.log(err);
+                                      callback(err, null);
+                                  } else {
+                                      // console.log(saveres);
+                                      callback(null, data2);
+                                  }
+                              });
+                              // callback(null, data2);
+                          }
+                      });
+                    }
+                  });
 
                 } else {
                     callback(null, {

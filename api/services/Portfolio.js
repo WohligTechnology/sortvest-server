@@ -94,7 +94,25 @@ var models = {
                     console.log(err);
                     callback(err, null);
                 } else if (updated) {
-                    callback(null, updated);
+                    // if(data.status ===  true){
+                    //   var emailData = {};
+                    //   emailData.email = "bagaria.pratik@gmail.com";
+                    //   console.log(data);
+                    //   emailData.content = "";
+                    //
+                    //
+                    //   emailData.filename = "emailverify.ejs";
+                    //   emailData.subject = "Email Verification";
+                    //   Config.email(emailData, function(err, emailRespo) {
+                    //       if (err) {
+                    //           callback(err, null);
+                    //       } else {
+                    //           callback(null,updated);
+                    //       }
+                    //   });
+                    // }else{
+                      callback(null, updated);
+                    // }
                 } else {
                     callback(null, {});
                 }

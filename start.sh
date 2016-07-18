@@ -1,3 +1,2 @@
 rm -rf .tmp/public
-node  --max-old-space-size=2096 app.js
-nodemon app.js
+nodemon  --max-old-space-size=2096 app.js --prod

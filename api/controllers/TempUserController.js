@@ -1,23 +1,19 @@
 module.exports = {
 
   save: function(req, res) {
-
     if (req.body) {
-      User.saveData(req.body, function(err, data) {
+      TempUser.saveData(req.body, function(err, data) {
         if (err) {
           res.json({
             value: false,
             data: err
           });
         } else {
-          console.log(data);
           if (data._id) {
-            req.session.user = data;
+            console.log(data);
             res.json({
               value: true,
-              data: {
-                message: "Signup Success"
-              }
+              data: data
             });
           } else {
             res.json({
@@ -39,7 +35,7 @@ module.exports = {
   getOne: function(req, res) {
 
     if (req.body) {
-      User.getOne(req.body, res.callback);
+      TempUser.getOne(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -47,29 +43,12 @@ module.exports = {
       });
     }
   },
-  forgotPassword: function(req, res) {
-      if (req.body) {
-          if (req.body.email && req.body.email !== "") {
-              User.forgotPassword(req.body, res.callback);
-          } else {
-              res.json({
-                  value: false,
-                  data: "Please provide email-id"
-              });
-          }
-      } else {
-          res.json({
-              value: false,
-              data: "Invalid Call"
-          });
-      }
-  },
 
   getSession: function(req, res) {
       if (req.body) {
           if (req.session.user) {
               req.body._id = req.session.user._id;
-              User.getSession(req.body, function(err, data) {
+              TempUser.getSession(req.body, function(err, data) {
                   if (err) {
                       res.json({
                           value: false,
@@ -86,7 +65,7 @@ module.exports = {
           } else {
               res.json({
                   value: false,
-                  data: "User not logged in"
+                  data: "TempUser not logged in"
               });
           }
       } else {
@@ -96,12 +75,27 @@ module.exports = {
           });
       }
   },
-
-
+  emailVerification:function(req,res){
+    if (req.body) {
+      if (req.body.verifyemail && req.body.verifyemail !== ""){
+        TempUser.emailVerification(req.body, res.callback);
+      }else{
+        res.json({
+          value: false,
+          data: "invalid params"
+        });
+      }
+    } else {
+      res.json({
+        value: false,
+        data: "Invalid Request"
+      });
+    }
+  },
   login: function(req, res) {
     if (req.body) {
       if (req.body.email && req.body.email !== "" && req.body.password && req.body.password !== "") {
-        User.login(req.body, function(err, data) {
+        TempUser.login(req.body, function(err, data) {
           if (err) {
             res.json({
               value: false,
@@ -120,7 +114,7 @@ module.exports = {
               res.json({
                 value: false,
                 data: {
-                  message: "Invalid Username/password"
+                  message: "Invalid TempUsername/password"
                 }
               });
             }
@@ -155,7 +149,6 @@ module.exports = {
       }
     });
   },
-
   getProfile: function(req, res) {
     if (req.session.user) {
       // console.log(JSON.stringify(req.session.user));
@@ -184,7 +177,7 @@ module.exports = {
     if (req.body) {
       if (req.session.user) {
         req.body._id = req.session.user._id;
-        User.editProfile(req.body, function(err, data) {
+        TempUser.editProfile(req.body, function(err, data) {
           if (err) {
             res.json({
               value: false,
@@ -203,7 +196,7 @@ module.exports = {
       } else {
         res.json({
           value: false,
-          data: "User not logged in"
+          data: "TempUser not logged in"
         });
       }
     } else {
@@ -214,10 +207,10 @@ module.exports = {
     }
   },
 
-  delete: function(req, res) {
+  saveItAsIs: function(req, res) {
     if (req.body) {
       console.log(req.body);
-      User.deleteData(req.body, res.callback);
+    TempUser.saveAsIs(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -226,10 +219,10 @@ module.exports = {
     }
   },
 
-  saveItAsIs: function(req, res) {
+  delete: function(req, res) {
     if (req.body) {
       console.log(req.body);
-      User.saveAsIs(req.body, res.callback);
+      TempUser.deleteData(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -243,7 +236,7 @@ module.exports = {
       Global.response(err, data, res);
     }
     if (req.body) {
-      User.getAll(req.body, res.callback);
+      TempUser.getAll(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -256,7 +249,7 @@ module.exports = {
       Global.response(err, data, res);
     }
     if (req.body) {
-      User.getAllNominee(req.body, res.callback);
+      TempUser.getAllNominee(req.body, res.callback);
     } else {
       res.json({
         value: false,
@@ -267,7 +260,7 @@ module.exports = {
   findLimited: function(req, res) {
     if (req.body) {
       if (req.body.pagenumber && req.body.pagenumber !== "" && req.body.pagesize && req.body.pagesize !== "") {
-        User.findLimited(req.body, res.callback);
+        TempUser.findLimited(req.body, res.callback);
       } else {
         res.json({
           value: false,

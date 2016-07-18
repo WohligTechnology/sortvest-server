@@ -103,7 +103,7 @@ var model = {
                     }
                   },function (err,data2) {
                     if(data2.verifyemail !== ""){
-                      callback("Please complete email verification",null);
+                      callback("Please check your inbox for instructions on email verification.",null);
                     }else{
                       var updated = data2.toObject();
                       delete updated._id;

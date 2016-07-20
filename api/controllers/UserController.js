@@ -47,6 +47,16 @@ module.exports = {
       });
     }
   },
+  findOneNominee: function(req, res) {
+    if (req.body) {
+      User.findOneNominee(req.body, res.callback);
+    } else {
+      res.json({
+        value: false,
+        data: "Invalid Request"
+      });
+    }
+  },
   forgotPassword: function(req, res) {
       if (req.body) {
           if (req.body.email && req.body.email !== "") {
@@ -63,6 +73,59 @@ module.exports = {
               data: "Invalid Call"
           });
       }
+  },
+  saveNominee: function(req, res) {
+    if (req.body) {
+      User.saveNominee(req.body, function(err, respo) {
+        if (err) {
+          res.json({
+            value: false,
+            data: err
+          });
+        } else {
+          res.json({
+            value: true,
+            data: respo
+          });
+        }
+      });
+    } else {
+      res.json({
+        value: false,
+        data: "Invalid call"
+      });
+    }
+  },
+
+  deleteNominee: function(req, res) {
+    if (req.body) {
+      if (req.body._id && req.body._id !== "") {
+        //	console.log("not valid");
+        User.deleteNominee(req.body, function(err, respo) {
+          if (err) {
+            res.json({
+              value: false,
+              data: err
+            });
+          } else {
+            res.json({
+              value: true,
+              data: respo
+            });
+          }
+        });
+      } else {
+        res.json({
+          value: false,
+          data: "Invalid Id"
+        });
+      }
+    } else {
+      res.json({
+        value: false,
+        data: "Invalid call"
+      });
+    }
   },
 
   getSession: function(req, res) {
@@ -263,6 +326,37 @@ module.exports = {
         data: "Invalid Request"
       });
     }
+  },
+
+  findNominee: function(req, res) {
+    if (req.body) {
+      User.findNominee(req.body, function(err, respo) {
+        if (err) {
+          res.json({
+            value: false,
+            data: err
+          });
+        } else {
+          res.json({
+            value: true,
+            data: respo
+          });
+        }
+      });
+    } else {
+      res.json({
+        value: false,
+        data: "Invalid call"
+      });
+    }
+    // if (req.body) {
+    //   User.getAllNominee(req.body, res.callback);
+    // } else {
+    //   res.json({
+    //     value: false,
+    //     data: "Invalid Request"
+    //   });
+    // }
   },
   findLimited: function(req, res) {
     if (req.body) {

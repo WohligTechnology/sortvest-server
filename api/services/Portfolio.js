@@ -94,25 +94,26 @@ var models = {
                     console.log(err);
                     callback(err, null);
                 } else if (updated) {
-                    // if(data.status ===  true){
-                    //   var emailData = {};
-                    //   emailData.email = "bagaria.pratik@gmail.com";
-                    //   console.log(data);
-                    //   emailData.content = "";
-                    //
-                    //
-                    //   emailData.filename = "emailverify.ejs";
-                    //   emailData.subject = "Email Verification";
-                    //   Config.email(emailData, function(err, emailRespo) {
-                    //       if (err) {
-                    //           callback(err, null);
-                    //       } else {
-                    //           callback(null,updated);
-                    //       }
-                    //   });
-                    // }else{
+                    if(data.status ===  true){
+                      var emailData = {};
+                      emailData.email = "rohanwohlig@gmail.com";
+                      emailData.content = "";
+                      _.each(data,function (key) {
+                        emailData[key]= data[key];
+                      });
+                      console.log(emailData);
+                      emailData.filename = "emailverify.ejs";
+                      emailData.subject = "Email Verification";
+                      Config.email(emailData, function(err, emailRespo) {
+                          if (err) {
+                              callback(err, null);
+                          } else {
+                              callback(null,updated);
+                          }
+                      });
+                    }else{
                       callback(null, updated);
-                    // }
+                    }
                 } else {
                     callback(null, {});
                 }

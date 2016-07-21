@@ -670,6 +670,20 @@ var models = {
             }
         });
     },
+    editProfileBackend: function(data, callback) {
+        delete data.password;
+        data.modificationDate = new Date();
+        this.findOneAndUpdate({
+            _id: data._id
+        }, data, function(err, data2) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                callback(null, data2);
+            }
+        });
+    },
     getSession: function(data, callback) {
         User.findOne({
             _id: data._id

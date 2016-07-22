@@ -687,7 +687,7 @@ var models = {
     getSession: function(data, callback) {
         User.findOne({
             _id: data._id
-        }).populate("referred.user", "name email", null, {
+        }).populate("referred.user", "name email documents.photo", null, {
             sort: {
                 "name": 1
             }

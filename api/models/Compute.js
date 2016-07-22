@@ -211,6 +211,24 @@ module.exports = {
         var targetCashflow = [];
         var dates = [];
         Compute.generateCashflow(data, cashflow);
+        // if(cashflow){
+        //   if(data.withdrawalfrequency == "Annually"){
+        //     var cashflowNew = _.cloneDeep(cashflow);
+        //     cashflow = [];
+        //     var k =0;
+        //     cashflow  = _.map(cashflowNew,function (key) {
+        //       console.log((k-( data.startMonth + 1)));
+        //       if((k-( data.startMonth + 1))% 12 === 0  || k <= data.startMonth){
+        //         k++;
+        //         return key;
+        //       }else{
+        //         k++;
+        //         return 0;
+        //       }
+        //
+        //     });
+        //   }
+        // }
         var month;
         month = new Date();
         for (var i = 0; i < cashflow.length; i++) {
@@ -242,6 +260,7 @@ module.exports = {
             data.type = i;
             var data1 = _.clone(data, true);
             Compute.generateAllPathTenure(data1, cashflow, onReturn);
+
         }
 
         function callCallback() {
@@ -649,6 +668,21 @@ module.exports = {
         if (!cashflow) {
             cashflow = [];
             Compute.generateCashflow(data, cashflow);
+            // if(data.withdrawalfrequency == "Annually"){
+            //   var cashflowNew = _.cloneDeep(cashflow);
+            //   cashflow = [];
+            //   var k =0;
+            //   cashflow  = _.map(cashflowNew,function (key) {
+            //     if((k-( data.startMonth + 1))% 12 || k <= data.startMonth){
+            //       k++;
+            //       return key;
+            //     }else{
+            //       k++;
+            //       return 0;
+            //     }
+            //
+            //   });
+            // }
         }
         var maxGrid = 950 * (cashflow.length + 5);
         var totalpath = 950;

@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var moment = require('moment');
 var Schema = mongoose.Schema;
 
 var schema = new Schema({
@@ -94,27 +95,37 @@ var models = {
                     console.log(err);
                     callback(err, null);
                 } else if (updated) {
-                  // console.log(updated);
-                  //   if(data.status ===  true){
-                  //     var emailData = {};
-                  //     emailData.email = "rohanwohlig@gmail.com";
-                  //     emailData.content = "";
-                  //     _.each(data,function (key) {
-                  //       emailData[key]= data[key];
-                  //     });
-                  //     console.log(emailData);
-                  //     emailData.filename = "emailverify.ejs";
-                  //     emailData.subject = "Email Verification";
-                  //     Config.email(emailData, function(err, emailRespo) {
-                  //         if (err) {
-                  //             callback(err, null);
-                  //         } else {
-                  //             callback(null,updated);
-                  //         }
-                  //     });
-                  //   }else{
+                  console.log(updated);
+                    if(data.status ===  true){
+                      var emailData = {};
+                      emailData.email = "rohanwohlig@gmail.com";
+                      emailData.content = "Here is the Plan of ";
+                      emailData.link = "";
+                      emailData.lumpsum = data.lumpsum;
+                      emailData.noOfMonth = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.noOfMonth)).format("MMM YY");
+                      emailData.withdrawalStart = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.startMonth)).format("MMM YY");
+                      emailData.withdrawalEnd = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.startMonth + data.noOfInstallment)).format("MMM YY");
+                      emailData.lumpsum = data.lumpsum;
+                      emailData.monthly = data.monthly;
+                      emailData.inflation = data.inflation;
+                      emailData.shortinput = data.shortinput;
+                      emailData.longinput = data.longinput;
+                      emailData.installment = data.installment;
+                      emailData.withdrawalfrequency = data.withdrawalfrequency;
+                      emailData.goalname = data.goalname;
+                      console.log(emailData);
+                      emailData.filename = "plannerexecute.ejs";
+                      emailData.subject = "Email Verification";
+                      Config.email(emailData, function(err, emailRespo) {
+                          if (err) {
+                              callback(err, null);
+                          } else {
+                              callback(null,updated);
+                          }
+                      });
+                    }else{
                       callback(null, updated);
-                    // }
+                    }
                 } else {
                     callback(null, {});
                 }
@@ -166,7 +177,8 @@ var models = {
             path: "user",
             select: {
                 _id: 1,
-                name: 1
+                name: 1,
+                email:1
             }
         }]).populate([{
             path: "funds",

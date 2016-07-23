@@ -1,0 +1,16 @@
+var arrPosts = [{
+  name: "editor",
+  filter: {
+    color : true,
+    drawarLikeIcon : true
+  }
+},{
+  name: "journeyongoing",
+  filter: {
+    color : false,
+    drawarLikeIcon : true
+  }
+}];
+$scope.post = {};
+
+$scope.

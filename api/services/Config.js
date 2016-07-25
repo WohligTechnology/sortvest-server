@@ -345,6 +345,7 @@ var models = {
                                     to: data.email,
                                     from: "support@sortvest.com",
                                     subject: data.subject,
+                                    cc:data.cc,
                                     fromname: 'Sortvest Support',
                                     html: body
                                 }, function(err, json) {
@@ -367,6 +368,6 @@ var models = {
             }
         });
     },
-    
+
 };
 module.exports = _.assign(module.exports, models);

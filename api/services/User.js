@@ -131,7 +131,10 @@ var schema = new Schema({
             default: ""
         }
     },
-    portfolios: [String],
+    portfolios: [{
+      type:Schema.Types.ObjectId,
+      ref : 'Portfolio'
+    }],
     referralCode: {
         type: String,
         default: ""

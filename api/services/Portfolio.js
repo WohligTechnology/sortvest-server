@@ -97,31 +97,54 @@ var models = {
                 } else if (updated) {
                   console.log(updated);
                     if(data.status ===  true){
-                      var emailData = {};
-                      emailData.email = "rohanwohlig@gmail.com";
-                      emailData.content = "Here is the Plan of ";
-                      emailData.link = "";
-                      emailData.lumpsum = data.lumpsum;
-                      emailData.noOfMonth = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.noOfMonth)).format("MMM YY");
-                      emailData.withdrawalStart = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.startMonth)).format("MMM YY");
-                      emailData.withdrawalEnd = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.startMonth + data.noOfInstallment)).format("MMM YY");
-                      emailData.lumpsum = data.lumpsum;
-                      emailData.monthly = data.monthly;
-                      emailData.inflation = data.inflation;
-                      emailData.shortinput = data.shortinput;
-                      emailData.longinput = data.longinput;
-                      emailData.installment = data.installment;
-                      emailData.withdrawalfrequency = data.withdrawalfrequency;
-                      emailData.goalname = data.goalname;
-                      console.log(emailData);
-                      emailData.filename = "plannerexecute.ejs";
-                      emailData.subject = "Email Verification";
-                      Config.email(emailData, function(err, emailRespo) {
-                          if (err) {
-                              callback(err, null);
-                          } else {
-                              callback(null,updated);
+
+                      User.findOneAndUpdate({
+                        _id:data.user
+                      },{
+                        $addToSet:{
+                          portfolios:data._id
+                        }
+                      },function (err,resp) {
+                        console.log();
+                        if(err){
+                          callback(err,null);
+                        }else{
+                          var emailData = {};
+                          emailData.email = "sortvest@gmail.com";
+                          if(resp.name){
+                            emailData.content = "Here is the Plan Executed by "+resp.name+ ". Contact : email :"+resp.email+" Mobile : "+resp.mobile;
+                          }else{
+                            emailData.content = "Here is the Plan Executed. Contact : email :"+resp.email+" Mobile : "+resp.mobile;
                           }
+                          emailData.cc  = resp.email;
+                          emailData.link = "";
+                          emailData.lumpsum = data.lumpsum;
+                          emailData.noOfMonth = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.noOfMonth)).format("MMM YY");
+                          emailData.withdrawalStart = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.startMonth)).format("MMM YY");
+                          emailData.withdrawalEnd = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.startMonth + data.noOfInstallment)).format("MMM YY");
+                          emailData.lumpsum = data.lumpsum;
+                          emailData.monthly = data.monthly;
+                          emailData.inflation = data.inflation;
+                          emailData.shortinput = data.shortinput;
+                          emailData.longinput = data.longinput;
+                          emailData.installment = data.installment;
+                          emailData.withdrawalfrequency = data.withdrawalfrequency;
+                          if(data.goalname){
+                            emailData.goalname = data.goalname;
+                          }else{
+                            emailData.goalname = "";
+                          }
+                          console.log(emailData);
+                          emailData.filename = "plannerexecute.ejs";
+                          emailData.subject = "Plan Executed";
+                          Config.email(emailData, function(err, emailRespo) {
+                              if (err) {
+                                  callback(err, null);
+                              } else {
+                                  callback(null,updated);
+                              }
+                          });
+                        }
                       });
                     }else{
                       callback(null, updated);

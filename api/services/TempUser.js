@@ -171,8 +171,11 @@ var models = {
         var user = this(data);
         user.timestamp = new Date();
         this.count({
-            mobile: data.mobile,
-            email: data.email
+            $or: [{
+                mobile: data.mobile
+            }, {
+                email: data.email
+            }]
         }, function(err, found) {
             if (err) {
                 console.log(err);

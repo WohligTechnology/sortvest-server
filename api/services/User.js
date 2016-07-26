@@ -132,8 +132,8 @@ var schema = new Schema({
         }
     },
     portfolios: [{
-      type:Schema.Types.ObjectId,
-      ref : 'Portfolio'
+        type: Schema.Types.ObjectId,
+        ref: 'Portfolio'
     }],
     referralCode: {
         type: String,
@@ -174,8 +174,11 @@ var models = {
         console.log(data);
         user.timestamp = new Date();
         this.count({
-            mobile: data.mobile,
-            email: data.email
+            $or: [{
+                mobile: data.mobile
+            }, {
+                email: data.email
+            }]
         }, function(err, found) {
             if (err) {
                 console.log(err);
@@ -257,8 +260,11 @@ var models = {
         } else {
 
             this.count({
-                mobile: data.mobile,
-                email: data.email
+                $or: [{
+                    mobile: data.mobile
+                }, {
+                    email: data.email
+                }]
             }, function(err, found) {
                 if (err) {
                     console.log(err);
@@ -286,63 +292,63 @@ var models = {
     },
 
     saveNominee: function(data, callback) {
-      var user = data.user;
+        var user = data.user;
 
-      if (!data._id) {
-        User.update({
-          _id: user
-        }, {
-          $push: {
-            nominee: data
-          }
-        }, function(err, updated) {
-          if (err) {
-            callback(err, null);
-          } else if (updated) {
-            callback(null, updated);
-          }else{
-            callback(null,null);
-          }
-        });
-      } else {
-        data._id = objectid(data._id);
-        tobechanged = {};
-        var attribute = "nominee.$.";
-        _.forIn(data, function(value, key) {
-          tobechanged[attribute + key] = value;
-        });
-        console.log(tobechanged);
-        User.update({
-          "nominee._id": data._id
-        }, {
-          $set: tobechanged
-        }, function(err, updated) {
-          if (err) {
-            console.log(err);
-            callback(err, null);
-          } else {
-            callback(null, updated);
-          }
-        });
-      }
+        if (!data._id) {
+            User.update({
+                _id: user
+            }, {
+                $push: {
+                    nominee: data
+                }
+            }, function(err, updated) {
+                if (err) {
+                    callback(err, null);
+                } else if (updated) {
+                    callback(null, updated);
+                } else {
+                    callback(null, null);
+                }
+            });
+        } else {
+            data._id = objectid(data._id);
+            tobechanged = {};
+            var attribute = "nominee.$.";
+            _.forIn(data, function(value, key) {
+                tobechanged[attribute + key] = value;
+            });
+            console.log(tobechanged);
+            User.update({
+                "nominee._id": data._id
+            }, {
+                $set: tobechanged
+            }, function(err, updated) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    callback(null, updated);
+                }
+            });
+        }
     },
     deleteNominee: function(data, callback) {
-      User.update({
-        "nominee._id": data._id
-      }, {
-        $pull: {
-          "nominee": {
-              "_id": objectid(data._id)
-          }
-        }
-      }, function(err, updated) {
-        console.log(updated);
-        if (err) {
-          callback(err, null);
-        } else {
-          callback(null, updated);
-        }
-      });
+        User.update({
+            "nominee._id": data._id
+        }, {
+            $pull: {
+                "nominee": {
+                    "_id": objectid(data._id)
+                }
+            }
+        }, function(err, updated) {
+            console.log(updated);
+            if (err) {
+                callback(err, null);
+            } else {
+                callback(null, updated);
+            }
+        });
 
     },
     deleteData: function(data, callback) {
@@ -383,7 +389,7 @@ var models = {
             nominee: 1,
             _id: 1
         }).lean().exec(function(err, found) {
-          console.log(found);
+            console.log(found);
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -397,120 +403,120 @@ var models = {
         });
     },
     findOneNominee: function(data, callback) {
-      // aggregate query
-      User.aggregate([{
-        $unwind: "$nominee"
-      }, {
-        $match: {
-          "nominee._id": objectid(data._id)
-        }
-      }, {
-        $project: {
-          nominee: 1
-        }
-      }]).exec(function(err, respo) {
-        if (err) {
-          console.log(err);
-          callback(err, null);
-        } else if (respo && respo.length > 0 && respo[0].nominee) {
-          callback(null, respo[0].nominee);
-        } else {
-          callback({
-            message: "No data found"
-          }, null);
-        }
-      });
+        // aggregate query
+        User.aggregate([{
+            $unwind: "$nominee"
+        }, {
+            $match: {
+                "nominee._id": objectid(data._id)
+            }
+        }, {
+            $project: {
+                nominee: 1
+            }
+        }]).exec(function(err, respo) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else if (respo && respo.length > 0 && respo[0].nominee) {
+                callback(null, respo[0].nominee);
+            } else {
+                callback({
+                    message: "No data found"
+                }, null);
+            }
+        });
     },
 
     findNominee: function(data, callback) {
-      var newreturns = {};
-      newreturns.data = [];
-      var check = new RegExp(data.search, "i");
-      data.pagenumber = parseInt(data.pagenumber);
-      data.pagesize = parseInt(data.pagesize);
-      var skip = parseInt(data.pagesize * (data.pagenumber - 1));
-      async.parallel([
-          function(callback) {
-            User.aggregate([{
-              $match: {
-                _id: objectid(data._id)
-              }
-            }, {
-              $unwind: "$nominee"
-            }, {
-              $group: {
-                _id: null,
-                count: {
-                  $sum: 1
+        var newreturns = {};
+        newreturns.data = [];
+        var check = new RegExp(data.search, "i");
+        data.pagenumber = parseInt(data.pagenumber);
+        data.pagesize = parseInt(data.pagesize);
+        var skip = parseInt(data.pagesize * (data.pagenumber - 1));
+        async.parallel([
+                function(callback) {
+                    User.aggregate([{
+                        $match: {
+                            _id: objectid(data._id)
+                        }
+                    }, {
+                        $unwind: "$nominee"
+                    }, {
+                        $group: {
+                            _id: null,
+                            count: {
+                                $sum: 1
+                            }
+                        }
+                    }, {
+                        $project: {
+                            count: 1
+                        }
+                    }]).exec(function(err, result) {
+                        console.log(result);
+                        if (result && result[0]) {
+                            newreturns.total = result[0].count;
+                            newreturns.totalpages = Math.ceil(result[0].count / data.pagesize);
+                            callback(null, newreturns);
+                        } else if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            callback({
+                                message: "Count of null"
+                            }, null);
+                        }
+                    });
+                },
+                function(callback) {
+                    User.aggregate([{
+                        $match: {
+                            _id: objectid(data._id)
+                        }
+                    }, {
+                        $unwind: "$nominee"
+                    }, {
+                        $group: {
+                            _id: "$_id",
+                            nominee: {
+                                $push: "$nominee"
+                            }
+                        }
+                    }, {
+                        $project: {
+                            _id: 0,
+                            nominee: {
+                                $slice: ["$nominee", skip, data.pagesize]
+                            }
+                        }
+                    }]).exec(function(err, found) {
+                        console.log(found);
+                        if (found && found.length > 0) {
+                            newreturns.data = found[0].nominee;
+                            callback(null, newreturns);
+                        } else if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            callback({
+                                message: "Count of null"
+                            }, null);
+                        }
+                    });
                 }
-              }
-            }, {
-              $project: {
-                count: 1
-              }
-            }]).exec(function(err, result) {
-              console.log(result);
-              if (result && result[0]) {
-                newreturns.total = result[0].count;
-                newreturns.totalpages = Math.ceil(result[0].count / data.pagesize);
-                callback(null, newreturns);
-              } else if (err) {
-                console.log(err);
-                callback(err, null);
-              } else {
-                callback({
-                  message: "Count of null"
-                }, null);
-              }
+            ],
+            function(err, data4) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else if (data4) {
+                    callback(null, newreturns);
+                } else {
+                    callback(null, newreturns);
+                }
             });
-          },
-          function(callback) {
-            User.aggregate([{
-              $match: {
-                _id: objectid(data._id)
-              }
-            }, {
-              $unwind: "$nominee"
-            }, {
-              $group: {
-                _id: "$_id",
-                nominee: {
-                  $push: "$nominee"
-                }
-              }
-            }, {
-              $project: {
-                _id: 0,
-                nominee: {
-                  $slice: ["$nominee", skip, data.pagesize]
-                }
-              }
-            }]).exec(function(err, found) {
-              console.log(found);
-              if (found && found.length > 0) {
-                newreturns.data = found[0].nominee;
-                callback(null, newreturns);
-              } else if (err) {
-                console.log(err);
-                callback(err, null);
-              } else {
-                callback({
-                  message: "Count of null"
-                }, null);
-              }
-            });
-          }
-        ],
-        function(err, data4) {
-          if (err) {
-            console.log(err);
-            callback(err, null);
-          } else if (data4) {
-            callback(null, newreturns);
-          } else {
-            callback(null, newreturns);
-          }
-        });
     },
     getOne: function(data, callback) {
         this.findOne({

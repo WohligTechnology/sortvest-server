@@ -110,7 +110,7 @@ var models = {
                           callback(err,null);
                         }else{
                           var emailData = {};
-                          emailData.email = "pratik.bagaria@gmail.com";
+                          emailData.email = "bagaria.pratik@gmail.com";
                           if(resp.name){
                             emailData.content = "Here is the Plan Executed by "+resp.name+ ". Contact : email :"+resp.email+" Mobile : "+resp.mobile;
                           }else{

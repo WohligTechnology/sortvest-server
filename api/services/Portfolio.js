@@ -14,8 +14,8 @@ var schema = new Schema({
     },
     funds: [{
         fundid: {
-            type: String,
-            default: ""
+            type: Schema.Types.ObjectId,
+            ref: 'Funds'
         },
         purchaseprice: {
             type: String,
@@ -24,6 +24,15 @@ var schema = new Schema({
         quantity: {
             type: String,
             default: ""
+        },
+        lump:
+        {
+          type:Number,
+          default : 0
+        },
+        monthly :{
+          type:Number,
+          default:0
         }
     }],
     goalname: {
@@ -109,41 +118,51 @@ var models = {
                         if(err){
                           callback(err,null);
                         }else{
-                          var emailData = {};
-                          emailData.email = "bagaria.pratik@gmail.com";
-                          if(resp.name){
-                            emailData.content = "Here is the Plan Executed by "+resp.name+ ". Contact : email :"+resp.email+" Mobile : "+resp.mobile;
-                          }else{
-                            emailData.content = "Here is the Plan Executed. Contact : email :"+resp.email+" Mobile : "+resp.mobile;
-                          }
-                          emailData.cc  = resp.email;
-                          emailData.link = "";
-                          emailData.lumpsum = data.lumpsum;
-                          emailData.noOfMonth = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.noOfMonth)).format("MMM YY");
-                          emailData.withdrawalStart = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.startMonth)).format("MMM YY");
-                          emailData.withdrawalEnd = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.startMonth + data.noOfInstallment)).format("MMM YY");
-                          emailData.lumpsum = data.lumpsum;
-                          emailData.monthly = data.monthly;
-                          emailData.inflation = data.inflation;
-                          emailData.shortinput = data.shortinput;
-                          emailData.longinput = data.longinput;
-                          emailData.installment = data.installment;
-                          emailData.withdrawalfrequency = data.withdrawalfrequency;
-                          if(data.goalname){
-                            emailData.goalname = data.goalname;
-                          }else{
-                            emailData.goalname = "";
-                          }
-                          console.log(emailData);
-                          emailData.filename = "plannerexecute.ejs";
-                          emailData.subject = "Plan Executed";
-                          Config.email(emailData, function(err, emailRespo) {
-                              if (err) {
-                                  callback(err, null);
-                              } else {
-                                  callback(null,updated);
+                          Portfolio.getOne(data,function (err,dataGot) {
+                            if(err){
+                              callback(err,null);
+                            }else if(dataGot){
+                              var emailData = {};
+                              emailData.email = "bagaria.pratik@gmail.com";
+                              if(resp.name){
+                                emailData.content = "Here is the Plan Executed by "+resp.name+ ". Contact : email : "+resp.email+" Mobile : "+resp.mobile;
+                              }else{
+                                emailData.content = "Here is the Plan Executed. Contact : email : "+resp.email+" Mobile : "+resp.mobile;
                               }
+                              emailData.cc  = resp.email;
+                              emailData.link = "";
+                              emailData.lumpsum = data.lumpsum;
+                              emailData.noOfMonth = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.noOfMonth)).format("MMM YY");
+                              emailData.withdrawalStart = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.startMonth)).format("MMM YY");
+                              emailData.withdrawalEnd = moment(new Date(data.executiontime).setMonth(new Date(data.executiontime).getMonth()+data.startMonth + data.noOfInstallment)).format("MMM YY");
+                              emailData.lumpsum = data.lumpsum;
+                              emailData.monthly = data.monthly;
+                              emailData.inflation = data.inflation;
+                              emailData.shortinput = data.shortinput;
+                              emailData.longinput = data.longinput;
+                              emailData.installment = data.installment;
+                              emailData.withdrawalfrequency = data.withdrawalfrequency;
+                              
+                              emailData.funds = dataGot.funds;
+                              if(data.goalname){
+                                emailData.goalname = data.goalname;
+                              }else{
+                                emailData.goalname = "";
+                              }
+                              console.log(emailData);
+                              emailData.filename = "plannerexecute.ejs";
+                              emailData.subject = "Plan Executed";
+                              Config.email(emailData, function(err, emailRespo) {
+                                  if (err) {
+                                      callback(err, null);
+                                  } else {
+                                      callback(null,updated);
+                                  }
+                              });
+                            }
                           });
+
+
                         }
                       });
                     }else{
@@ -204,7 +223,7 @@ var models = {
                 email:1
             }
         }]).populate([{
-            path: "funds",
+            path: "funds.fundid",
             select: {
                 _id: 1,
                 name: 1

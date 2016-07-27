@@ -74,6 +74,35 @@
                 <td><%= longinput%>%</td>
             </tr>
         </table>
+        <br>
+        <br>
+        <table class="value-list">
+            <tr>
+                <th>Products</th>
+                <th>One-time</th>
+                <th>Monthly</th>
+            </tr>
+            <tr>
+              <td><%= funds[0].fundid.name%></td>
+              <td>₹ <%= funds[0].lump%></td>
+              <td>₹ <%= funds[0].monthly%></td>
+            </tr>
+            <tr>
+              <td><%= funds[1].fundid.name%></td>
+              <td>₹ <%= funds[1].lump%></td>
+              <td>₹ <%= funds[1].monthly%></td>
+            </tr>
+            <tr>
+              <td><%= funds[2].fundid.name%></td>
+              <td>₹ <%= funds[2].lump%></td>
+              <td>₹ <%= funds[2].monthly%></td>
+            </tr>
+            <tr>
+              <td><%= funds[3].fundid.name%></td>
+              <td>₹ <%= funds[3].lump%></td>
+              <td>₹ <%= funds[3].monthly%></td>
+            </tr>
+        </table>
 
         <footer style="background:#fff;padding:10px 0 ">
             <div style="padding:20px; float:right">

@@ -332,6 +332,47 @@ var models = {
             });
         }
     },
+    saveReferral: function(data, callback) {
+        var user = data.updateuser;
+
+        if (!data._id) {
+            User.update({
+                _id: user
+            }, {
+                $push: {
+                    referred: data
+                }
+            }, function(err, updated) {
+                if (err) {
+                    callback(err, null);
+                } else if (updated) {
+                    callback(null, updated);
+                } else {
+                    callback(null, null);
+                }
+            });
+        } else {
+            data._id = objectid(data._id);
+            tobechanged = {};
+            var attribute = "referred.$.";
+            _.forIn(data, function(value, key) {
+                tobechanged[attribute + key] = value;
+            });
+            console.log(tobechanged);
+            User.update({
+                "referred._id": data._id
+            }, {
+                $set: tobechanged
+            }, function(err, updated) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    callback(null, updated);
+                }
+            });
+        }
+    },
     deleteNominee: function(data, callback) {
         User.update({
             "nominee._id": data._id

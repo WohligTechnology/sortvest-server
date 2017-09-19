@@ -8,7 +8,7 @@
 var mongoose = require('mongoose');
 var Grid = require('gridfs-stream');
 var fs = require("fs");
-var lwip = require("lwip");
+// var lwip = require("lwip");
 var process = require('child_process');
 var lodash = require('lodash');
 var moment = require('moment');
@@ -27,12 +27,12 @@ var schema = new Schema({
 module.exports = mongoose.model('Config', schema);
 var models = {
 
-    saveData: function(data, callback) {
+    saveData: function (data, callback) {
         var config = this(data);
         if (data._id) {
             this.findOneAndUpdate({
                 _id: data._id
-            }, data, function(err, data2) {
+            }, data, function (err, data2) {
                 if (err) {
                     callback(err, null);
                 } else {
@@ -40,7 +40,7 @@ var models = {
                 }
             });
         } else {
-            config.save(function(err, data2) {
+            config.save(function (err, data2) {
                 if (err) {
                     callback(err, null);
                 } else {
@@ -50,8 +50,8 @@ var models = {
         }
 
     },
-    getAll: function(data, callback) {
-        this.find({}, {}, {}, function(err, deleted) {
+    getAll: function (data, callback) {
+        this.find({}, {}, {}, function (err, deleted) {
             if (err) {
                 callback(err, null);
             } else {
@@ -59,10 +59,10 @@ var models = {
             }
         });
     },
-    deleteData: function(data, callback) {
+    deleteData: function (data, callback) {
         this.findOneAndRemove({
             _id: data._id
-        }, function(err, deleted) {
+        }, function (err, deleted) {
             if (err) {
                 callback(err, null)
             } else {
@@ -70,7 +70,7 @@ var models = {
             }
         });
     },
-    GlobalCallback: function(err, data, res) {
+    GlobalCallback: function (err, data, res) {
         if (err) {
             res.json({
                 error: err,
@@ -83,7 +83,7 @@ var models = {
             });
         }
     },
-    uploadFile: function(filename, callback) {
+    uploadFile: function (filename, callback) {
         var id = mongoose.Types.ObjectId();
         var extension = filename.split(".").pop();
         extension = extension.toLowerCase();
@@ -102,7 +102,7 @@ var models = {
                 filename: newFilename,
                 metadata: metaValue
             });
-            writestream2.on('finish', function() {
+            writestream2.on('finish', function () {
                 callback(null, {
                     name: newFilename
                 });
@@ -112,7 +112,7 @@ var models = {
         }
 
         if (extension == "png" || extension == "jpg" || extension == "gif") {
-            lwip.open(filename, extension, function(err, image) {
+            lwip.open(filename, extension, function (err, image) {
                 if (err) {
                     console.log(err);
                     callback(err, null);
@@ -125,7 +125,7 @@ var models = {
 
                     if (upImage.width > upImage.height) {
                         if (upImage.width > MaxImageSize) {
-                            image.resize(MaxImageSize, MaxImageSize / (upImage.width / upImage.height), function(err, image2) {
+                            image.resize(MaxImageSize, MaxImageSize / (upImage.width / upImage.height), function (err, image2) {
                                 if (err) {
                                     console.log(err);
                                     callback(err, null);
@@ -135,7 +135,7 @@ var models = {
                                         height: image2.height(),
                                         ratio: image2.width() / image2.height()
                                     };
-                                    image2.writeFile(filename, function(err) {
+                                    image2.writeFile(filename, function (err) {
                                         writer2(upImage);
                                     });
                                 }
@@ -145,7 +145,7 @@ var models = {
                         }
                     } else {
                         if (upImage.height > MaxImageSize) {
-                            image.resize((upImage.width / upImage.height) * MaxImageSize, MaxImageSize, function(err, image2) {
+                            image.resize((upImage.width / upImage.height) * MaxImageSize, MaxImageSize, function (err, image2) {
                                 if (err) {
                                     console.log(err);
                                     callback(err, null);
@@ -155,7 +155,7 @@ var models = {
                                         height: image2.height(),
                                         ratio: image2.width() / image2.height()
                                     };
-                                    image2.writeFile(filename, function(err) {
+                                    image2.writeFile(filename, function (err) {
                                         writer2(upImage);
                                     });
                                 }
@@ -170,18 +170,18 @@ var models = {
             imageStream.pipe(writestream);
         }
 
-        writestream.on('finish', function() {
+        writestream.on('finish', function () {
             callback(null, {
                 name: newFilename
             });
             fs.unlink(filename);
         });
     },
-    readUploaded: function(filename, width, height, style, res) {
+    readUploaded: function (filename, width, height, style, res) {
         var readstream = gfs.createReadStream({
             filename: filename
         });
-        readstream.on('error', function(err) {
+        readstream.on('error', function (err) {
             res.json({
                 value: false,
                 error: err
@@ -193,7 +193,7 @@ var models = {
                 filename: gridFSFilename,
                 metadata: metaValue
             });
-            writestream2.on('finish', function() {
+            writestream2.on('finish', function () {
                 fs.unlink(filename);
             });
             fs.createReadStream(filename).pipe(res);
@@ -204,7 +204,7 @@ var models = {
             var readstream2 = gfs.createReadStream({
                 filename: filename2
             });
-            readstream2.on('error', function(err) {
+            readstream2.on('error', function (err) {
                 res.json({
                     value: false,
                     error: err
@@ -235,7 +235,7 @@ var models = {
             var newNameExtire = newName + "." + extension;
             gfs.exist({
                 filename: newNameExtire
-            }, function(err, found) {
+            }, function (err, found) {
                 if (err) {
                     res.json({
                         value: false,
@@ -247,8 +247,8 @@ var models = {
                 } else {
                     var imageStream = fs.createWriteStream('./.tmp/uploads/' + filename);
                     readstream.pipe(imageStream);
-                    imageStream.on("finish", function() {
-                        lwip.open('./.tmp/uploads/' + filename, function(err, image) {
+                    imageStream.on("finish", function () {
+                        lwip.open('./.tmp/uploads/' + filename, function (err, image) {
                             ImageWidth = image.width();
                             ImageHeight = image.height();
                             var newWidth = 0;
@@ -285,16 +285,16 @@ var models = {
                                 newWidth = height * (ImageWidth / ImageHeight);
                                 newHeight = height;
                             }
-                            image.resize(parseInt(newWidth), parseInt(newHeight), function(err, image2) {
+                            image.resize(parseInt(newWidth), parseInt(newHeight), function (err, image2) {
 
                                 if (style == "cover") {
 
-                                    image2.crop(parseInt(width), parseInt(height), function(err, image3) {
+                                    image2.crop(parseInt(width), parseInt(height), function (err, image3) {
                                         if (err) {
 
                                         } else {
 
-                                            image3.writeFile('./.tmp/uploads/' + filename, function(err) {
+                                            image3.writeFile('./.tmp/uploads/' + filename, function (err) {
                                                 writer2('./.tmp/uploads/' + filename, newNameExtire, {
                                                     width: newWidth,
                                                     height: newHeight
@@ -306,7 +306,7 @@ var models = {
 
 
                                 } else {
-                                    image2.writeFile('./.tmp/uploads/' + filename, function(err) {
+                                    image2.writeFile('./.tmp/uploads/' + filename, function (err) {
                                         writer2('./.tmp/uploads/' + filename, newNameExtire, {
                                             width: newWidth,
                                             height: newHeight
@@ -324,8 +324,8 @@ var models = {
         }
         //error handling, e.g. file does not exist
     },
-    email: function(data, callback) {
-        Password.find().exec(function(err, userdata) {
+    email: function (data, callback) {
+        Password.find().exec(function (err, userdata) {
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -334,7 +334,7 @@ var models = {
                     request.post({
                         url: requrl + "config/emailReader/",
                         json: data
-                    }, function(err, http, body) {
+                    }, function (err, http, body) {
                         if (err) {
                             console.log(err);
                             callback(err, null);
@@ -345,10 +345,10 @@ var models = {
                                     to: data.email,
                                     from: "support@sortvest.com",
                                     subject: data.subject,
-                                    cc:data.cc,
+                                    cc: data.cc,
                                     fromname: 'Sortvest Support',
                                     html: body
-                                }, function(err, json) {
+                                }, function (err, json) {
                                     if (err) {
                                         callback(err, null);
                                     } else {
@@ -356,15 +356,21 @@ var models = {
                                     }
                                 });
                             } else {
-                                callback({ message: "Some error in html" }, null);
+                                callback({
+                                    message: "Some error in html"
+                                }, null);
                             }
                         }
                     });
                 } else {
-                    callback({ message: "Please provide params" }, null);
+                    callback({
+                        message: "Please provide params"
+                    }, null);
                 }
             } else {
-                callback({ message: "No api keys found" }, null);
+                callback({
+                    message: "No api keys found"
+                }, null);
             }
         });
     },

@@ -1,0 +1,6 @@
+apps:
+  - script: "app.js"
+    name: "Sortvest - 82"
+    watch: false
+    args: "--prod"
+    exec_mode: "cluster"

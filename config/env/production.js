@@ -11,7 +11,6 @@
  */
 
 module.exports = {
-
   /***************************************************************************
    * Set the default database connection for models in the production        *
    * environment (see config/connections.js and config/models.js )           *
@@ -21,7 +20,7 @@ module.exports = {
   //   connection: 'someMysqlServer'
   // },
   hookTimeout: 40000,
-  port: 82,
+  port: 1337
   /***************************************************************************
    * Set the port in the production environment to 80                        *
    ***************************************************************************/
@@ -35,5 +34,4 @@ module.exports = {
   // log: {
   //   level: "silent"
   // }
-
 };

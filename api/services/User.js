@@ -636,10 +636,12 @@ var models = {
     },
 
     login: function (data, callback) {
+        console.log(data)
         this.findOne({
             email: data.email,
             password: md5(data.password)
         }).lean().exec(function (err, found) {
+            console.log(err,found);
             if (err) {
                 console.log(err);
                 callback(err, null);
@@ -736,7 +738,7 @@ var models = {
     },
     getSession: function (data, callback) {
         User.findOne({
-            _id: "5756c26c66dfb4d31ceddebd"
+            _id: "576e69aacfc27d02b5d91fcd"
         }).lean().exec(function (err, res) {
             if (err) {
                 console.log(err);

@@ -4,4 +4,4 @@ apps:
     watch: false
     args: "--prod"
     exec_mode: "cluster"
-    node_args: "--max_old_space_size=500"
+    node_args: "--max_old_space_size=4192"

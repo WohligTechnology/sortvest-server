@@ -1,9 +1,7 @@
 module.exports = {
-
-  save: function (req, res) {
-
+  save: function(req, res) {
     if (req.body) {
-      User.saveData(req.body, function (err, data) {
+      User.saveData(req.body, function(err, data) {
         if (err) {
           res.json({
             value: false,
@@ -25,7 +23,6 @@ module.exports = {
               data: data
             });
           }
-
         }
       });
     } else {
@@ -36,8 +33,7 @@ module.exports = {
     }
   },
 
-  getOne: function (req, res) {
-
+  getOne: function(req, res) {
     if (req.body) {
       User.getOne(req.body, res.callback);
     } else {
@@ -47,7 +43,7 @@ module.exports = {
       });
     }
   },
-  findOneNominee: function (req, res) {
+  findOneNominee: function(req, res) {
     if (req.body) {
       User.findOneNominee(req.body, res.callback);
     } else {
@@ -57,7 +53,7 @@ module.exports = {
       });
     }
   },
-  forgotPassword: function (req, res) {
+  forgotPassword: function(req, res) {
     if (req.body) {
       if (req.body.email && req.body.email !== "") {
         User.forgotPassword(req.body, res.callback);
@@ -74,9 +70,9 @@ module.exports = {
       });
     }
   },
-  saveNominee: function (req, res) {
+  saveNominee: function(req, res) {
     if (req.body) {
-      User.saveNominee(req.body, function (err, respo) {
+      User.saveNominee(req.body, function(err, respo) {
         if (err) {
           res.json({
             value: false,
@@ -96,9 +92,9 @@ module.exports = {
       });
     }
   },
-  saveReferral: function (req, res) {
+  saveReferral: function(req, res) {
     if (req.body) {
-      User.saveReferral(req.body, function (err, respo) {
+      User.saveReferral(req.body, function(err, respo) {
         if (err) {
           res.json({
             value: false,
@@ -119,11 +115,11 @@ module.exports = {
     }
   },
 
-  deleteNominee: function (req, res) {
+  deleteNominee: function(req, res) {
     if (req.body) {
       if (req.body._id && req.body._id !== "") {
         //	console.log("not valid");
-        User.deleteNominee(req.body, function (err, respo) {
+        User.deleteNominee(req.body, function(err, respo) {
           if (err) {
             res.json({
               value: false,
@@ -150,9 +146,9 @@ module.exports = {
     }
   },
 
-  getSession: function (req, res) {
+  getSession: function(req, res) {
     req.body._id = "5756c26c66dfb4d31ceddebd";
-    User.getSession(req.body, function (err, data) {
+    User.getSession(req.body, function(err, data) {
       if (err) {
         res.json({
           value: false,
@@ -168,11 +164,15 @@ module.exports = {
     });
   },
 
-
-  login: function (req, res) {
+  login: function(req, res) {
     if (req.body) {
-      if (req.body.email && req.body.email !== "" && req.body.password && req.body.password !== "") {
-        User.login(req.body, function (err, data) {
+      if (
+        req.body.email &&
+        req.body.email !== "" &&
+        req.body.password &&
+        req.body.password !== ""
+      ) {
+        User.login(req.body, function(err, data) {
           if (err) {
             res.json({
               value: false,
@@ -211,8 +211,8 @@ module.exports = {
     }
   },
 
-  logout: function (req, res) {
-    req.session.destroy(function (err) {
+  logout: function(req, res) {
+    req.session.destroy(function(err) {
       if (err) {
         res.json({
           value: false,
@@ -227,13 +227,12 @@ module.exports = {
     });
   },
 
-  getProfile: function (req, res) {
+  getProfile: function(req, res) {
     if (req.session.user) {
       // console.log(JSON.stringify(req.session.user));
       res.json({
         value: true,
         data: req.session.user
-
       });
     } else {
       res.json({
@@ -242,8 +241,8 @@ module.exports = {
       });
     }
   },
-  logout: function (req, res) {
-    req.session.destroy(function (err) {
+  logout: function(req, res) {
+    req.session.destroy(function(err) {
       res.json({
         data: "Logout Successful",
         value: true
@@ -251,11 +250,11 @@ module.exports = {
     });
   },
 
-  editProfile: function (req, res) {
+  editProfile: function(req, res) {
     if (req.body) {
       if (req.session.user) {
         req.body._id = req.session.user._id;
-        User.editProfile(req.body, function (err, data) {
+        User.editProfile(req.body, function(err, data) {
           if (err) {
             res.json({
               value: false,
@@ -285,9 +284,9 @@ module.exports = {
     }
   },
 
-  editProfileBackend: function (req, res) {
+  editProfileBackend: function(req, res) {
     if (req.body) {
-      User.editProfileBackend(req.body, function (err, data) {
+      User.editProfileBackend(req.body, function(err, data) {
         if (err) {
           res.json({
             value: false,
@@ -310,7 +309,7 @@ module.exports = {
     }
   },
 
-  delete: function (req, res) {
+  delete: function(req, res) {
     if (req.body) {
       console.log(req.body);
       User.deleteData(req.body, res.callback);
@@ -322,7 +321,7 @@ module.exports = {
     }
   },
 
-  saveItAsIs: function (req, res) {
+  saveItAsIs: function(req, res) {
     if (req.body) {
       console.log(req.body);
       User.saveAsIs(req.body, res.callback);
@@ -334,7 +333,7 @@ module.exports = {
     }
   },
 
-  getAll: function (req, res) {
+  getAll: function(req, res) {
     function callback(err, data) {
       Global.response(err, data, res);
     }
@@ -347,7 +346,7 @@ module.exports = {
       });
     }
   },
-  getAllNominee: function (req, res) {
+  getAllNominee: function(req, res) {
     function callback(err, data) {
       Global.response(err, data, res);
     }
@@ -361,9 +360,9 @@ module.exports = {
     }
   },
 
-  findNominee: function (req, res) {
+  findNominee: function(req, res) {
     if (req.body) {
-      User.findNominee(req.body, function (err, respo) {
+      User.findNominee(req.body, function(err, respo) {
         if (err) {
           res.json({
             value: false,
@@ -391,9 +390,14 @@ module.exports = {
     //   });
     // }
   },
-  findLimited: function (req, res) {
+  findLimited: function(req, res) {
     if (req.body) {
-      if (req.body.pagenumber && req.body.pagenumber !== "" && req.body.pagesize && req.body.pagesize !== "") {
+      if (
+        req.body.pagenumber &&
+        req.body.pagenumber !== "" &&
+        req.body.pagesize &&
+        req.body.pagesize !== ""
+      ) {
         User.findLimited(req.body, res.callback);
       } else {
         res.json({

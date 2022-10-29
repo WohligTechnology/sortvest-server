@@ -30,7 +30,7 @@
     "node-finance": "0.0.3",
     "nodemon": "^1.4.1",
     "rc": "1.0.1",
-    "sails": "~0.12.3",
+    "sails": "~1.5.3",
     "sails-disk": "~0.10.9",
     "sails-mongo": "^0.11.2",
     "sendgrid": "^2.0.0"

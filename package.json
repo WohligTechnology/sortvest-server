@@ -17,7 +17,7 @@
     "grunt-contrib-jst": "0.6.0",
     "grunt-contrib-less": "1.1.0",
     "grunt-contrib-uglify": "0.7.0",
-    "grunt-contrib-watch": "0.5.3",
+    "grunt-contrib-watch": "1.1.0",
     "grunt-sails-linker": "~0.10.1",
     "grunt-sync": "0.2.4",
     "include-all": "~0.1.6",
@@ -30,7 +30,7 @@
     "node-finance": "0.0.3",
     "nodemon": "^1.4.1",
     "rc": "1.0.1",
-    "sails": "~0.12.3",
+    "sails": "~1.5.3",
     "sails-disk": "~0.10.9",
     "sails-mongo": "^0.11.2",
     "sendgrid": "^2.0.0"
